@@ -5,6 +5,7 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\BookList;
+use App\Http\Requests\BookListRequest;
 
 class BookListController extends Controller
 {
@@ -16,7 +17,7 @@ class BookListController extends Controller
     public function index()
     {
         $bookDetails = BookList::orderby('book_id','desc')->get();
-        return view('admin.BookList.bookListShow',compact('bookDetails'));
+        return view('admin.BookList.index',compact('bookDetails'));
     }
 
     /**
@@ -24,10 +25,9 @@ class BookListController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create($id=null)
+    public function create()
     {
-        $bookData = null;
-        return view('admin.BookList.bookListCreateEdit',compact('bookData'));
+        return view('admin.BookList.create');
     }
 
     /**
@@ -36,20 +36,17 @@ class BookListController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(BookListRequest $request)
     {
-        $request->validate([
-            'name' => 'required',
-            'author' => 'required',
-            'price' => 'required',
-            'description' => 'required'
-        ]);
-        BookList::create([
-            'name'=>$request->name,
-            'description'=>$request->description,
-            'price'=>$request->price,
-            'author'=>$request->author,
-        ]);
+        BookList::create($request->only(['name','description','price','author']));
+
+        if($request->hasFile('images')){
+            $filenameWithExt = $request->file('images')->getClientOriginalName();
+            $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+            $extension = $request->file('images')->getClientOriginalExtension();
+            $fileNameToStore= $filename.'_'.time().'.'.$extension;
+            $path = $request->file('images')->storeAs('public/BookImages', $fileNameToStore);
+        }
 
         return redirect()->route('books.index')->with('success','Book Record created successfully !!');
     }
@@ -73,10 +70,8 @@ class BookListController extends Controller
      */
     public function edit($id)
     {
-        if(!empty($id)){
-            $bookData = BookList::where('book_id',$id)->first();
-        }
-        return view('admin.BookList.bookListCreateEdit',compact('bookData'));
+        $bookData = BookList::where('book_id',$id)->first();
+        return view('admin.BookList.edit',compact('bookData'));
     }
 
     /**
@@ -86,20 +81,12 @@ class BookListController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(BookListRequest $request, $id)
     {
-        $request->validate([
-            'name' => 'required',
-            'author' => 'required',
-            'price' => 'required',
-            'description' => 'required'
-        ]);
-        BookList::where('book_id',$id)->update([
-            'name'=>$request->name,
-            'description'=>$request->description,
-            'price'=>$request->price,
-            'author'=>$request->author,
-        ]);
+        $bookDetail = BookList::where('book_id',$id)->update($request->only(['name','description','price','author']));
+        if(empty($bookDetail)){
+            return redirect()->route('books.index')->with('error','The Data is not available !!');
+        }
         return redirect()->route('books.index')->with('success','Book Record Updated successfully !!');
     }
 
@@ -111,7 +98,10 @@ class BookListController extends Controller
      */
     public function destroy($id)
     {
-        BookList::where('book_id',$id)->delete();
+        $bookDetail = BookList::where('book_id',$id)->delete();
+        if(empty($bookDetail)){
+            return redirect()->route('books.index')->with('error','The Data is not available !!');
+        }
         return redirect()->route('books.index')->with('success','Book Record deleted successfully !!');
     }
 }

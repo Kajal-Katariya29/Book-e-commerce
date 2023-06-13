@@ -7,23 +7,23 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Rating extends Model
+class FavoriteItems extends Model
 {
     use HasFactory,SoftDeletes;
 
-    protected $table = 'ratings';
+    protected $table = 'favorite_items';
 
-    protected $primaryKey = 'rating_id';
+    protected $primaryKey = 'favorite_item_id';
 
-    protected $fillable = ['rating_id','user_id','book_id','rating','review','created_at','updated_at','deleted_at'];
+    protected $fillable = ['favorite_item_id','user_id','book_id','created_at','updated_at','deleted_at'];
 
     /**
-     * Get the user that owns the Rating
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * Get the user that owns the Favoritetems
      */
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
+
 }
