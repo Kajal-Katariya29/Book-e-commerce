@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\admin\BookListController;
+use App\Http\Controllers\admin\variants\VariantsController;
+use App\Http\Controllers\admin\variants\VariantTypeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,3 +21,6 @@ use Illuminate\Support\Facades\Route;
 // });
 
 Route::resource('/books', BookListController::class);
+Route::post('/delete-image/{id}',[BookListController::class,'deleteImage'])->name('books.delete.image');
+Route::resource('/variants', VariantsController::class);
+Route::resource('/variant-type',VariantTypeController::class);

@@ -24,7 +24,7 @@ class BookList extends Model
 
     public function bookMedia(): HasMany
     {
-        return $this->hasMany(BookMedia::class);
+        return $this->hasMany(BookMedia::class,'book_id','book_id');
     }
 
     /**

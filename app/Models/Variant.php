@@ -22,7 +22,7 @@ class Variant extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function varianttype (): HasMany
+    public function variant_type (): HasMany
     {
         return $this->hasMany(VariantType::class);
     }

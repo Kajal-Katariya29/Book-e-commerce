@@ -5,6 +5,7 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\BookList;
+use App\Models\BookMedia;
 use App\Http\Requests\BookListRequest;
 
 class BookListController extends Controller
@@ -38,16 +39,17 @@ class BookListController extends Controller
      */
     public function store(BookListRequest $request)
     {
-        BookList::create($request->only(['name','description','price','author']));
-
-        if($request->hasFile('images')){
-            $filenameWithExt = $request->file('images')->getClientOriginalName();
-            $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
-            $extension = $request->file('images')->getClientOriginalExtension();
-            $fileNameToStore= $filename.'_'.time().'.'.$extension;
-            $path = $request->file('images')->storeAs('public/BookImages', $fileNameToStore);
+        $bookList = BookList::create($request->only(['name','description','price','author']));
+        if ($images = $request->file('images')) {
+            foreach ($images as $image) {
+                $filename = $image->getClientOriginalName();
+                $image->move(public_path('images/Book-Images/' . $bookList->book_id . "/"), $filename);
+                BookMedia::create([
+                    'book_id' => $bookList->book_id,
+                    'media_name' => $filename
+                ]);
+            }
         }
-
         return redirect()->route('books.index')->with('success','Book Record created successfully !!');
     }
 
@@ -70,7 +72,7 @@ class BookListController extends Controller
      */
     public function edit($id)
     {
-        $bookData = BookList::where('book_id',$id)->first();
+        $bookData = BookList::with('bookMedia')->where('book_id',$id)->first();
         return view('admin.BookList.edit',compact('bookData'));
     }
 
@@ -84,9 +86,22 @@ class BookListController extends Controller
     public function update(BookListRequest $request, $id)
     {
         $bookDetail = BookList::where('book_id',$id)->update($request->only(['name','description','price','author']));
+
+        if ($images = $request->file('images')) {
+            foreach ($images as $image) {
+                $filename = $image->getClientOriginalName();
+                $image->move(public_path('images/Book-Images/' . $id . "/"), $filename);
+                BookMedia::create([
+                    'book_id' => $id,
+                    'media_name' => $filename
+                ]);
+            }
+        }
+
         if(empty($bookDetail)){
             return redirect()->route('books.index')->with('error','The Data is not available !!');
         }
+
         return redirect()->route('books.index')->with('success','Book Record Updated successfully !!');
     }
 
@@ -99,9 +114,26 @@ class BookListController extends Controller
     public function destroy($id)
     {
         $bookDetail = BookList::where('book_id',$id)->delete();
+
         if(empty($bookDetail)){
             return redirect()->route('books.index')->with('error','The Data is not available !!');
         }
         return redirect()->route('books.index')->with('success','Book Record deleted successfully !!');
+    }
+
+    public function deleteImage($id)
+    {
+        $bookMedia = BookMedia::where('book_media_id',$id)->first();
+
+        $upload_path = "images/Book-Images/" . $bookMedia->book_id . "/";
+
+        if (!empty($bookMedia->media_name) && file_exists($upload_path . $bookMedia->media_name)) {
+            unlink($upload_path . $bookMedia->media_name);
+        }
+
+        BookMedia::where('book_media_id',$id)->delete();
+
+        return response()->json(['status','success']);
+
     }
 }
