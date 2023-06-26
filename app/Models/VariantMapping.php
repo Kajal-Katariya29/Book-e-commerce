@@ -22,10 +22,12 @@ class VariantMapping extends Model
  *
  * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
  */
-    public function variantMapping(): BelongsTo
+    public function variantType(): BelongsTo
     {
-        return $this->belongsTo(Variant::class);
+        return $this->belongsTo(VariantType::class,'variant_type_id','variant_type_id');
     }
+
+
 
     /**
      * Get the bookList that owns the VariantMapping
@@ -33,6 +35,6 @@ class VariantMapping extends Model
 
     public function booklist(): BelongsTo
     {
-        return $this->belongsTo(BookList::class);
+        return $this->belongsTo(BookList::class,'book_id','book_id');
     }
 }

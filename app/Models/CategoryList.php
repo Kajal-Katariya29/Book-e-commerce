@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class CategoryList extends Model
 {
@@ -15,16 +16,16 @@ class CategoryList extends Model
 
     protected $primaryKey = 'cateogery_id';
 
-    protected $fillable = ['cateogery_id','category_parent_id','book_id','created_at','updated_at','deleted_at'];
+    protected $fillable = ['cateogery_id','category_parent_id','category_name','created_at','updated_at','deleted_at'];
 
     /**
-     * Get the booklist that owns the CategoryList
+     * Get all of the categoryMapping for the subCategory
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function booklist(): BelongsTo
+    public function subCategory(): HasMany
     {
-        return $this->belongsTo(BookList::class);
+        return $this->hasMany(CategoryList::class, 'cateogery_id', 'category_parent_id');
     }
 
 }

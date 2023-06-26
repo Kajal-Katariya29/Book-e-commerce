@@ -10,9 +10,11 @@
     <div class="row m-5">
         <div class="d-flex bd-highlight">
             <div class="me-auto p-2 bd-highlight fs-2">Book-e-Sale</div>
-            <div class="p-2 bd-highlight">
-                <a href="{{ route('books.create') }}" class="btn btn-success"> ADD Books </a>
-            </div>
+            @can('book.create')
+                <div class="p-2 bd-highlight">
+                    <a href="{{ route('books.create') }}" class="btn btn-success"> ADD Books </a>
+                </div>
+            @endcan
         </div>
     </div>
 </div>
@@ -35,7 +37,9 @@
         <th>Book_Description</th>
         <th>Book_author</th>
         <th>Book_price</th>
-        <th width="280px">Action</th>
+        {{-- @can('book.create') --}}
+            <th width="280px">Action</th>
+        {{-- @endcan --}}
     </tr>
     @foreach ($bookDetails as $bookDetail)
         <tr>
@@ -45,11 +49,15 @@
             <td>{{ $bookDetail->author }}</td>
             <td>{{ $bookDetail->price }}</td>
             <td>
-                <a class="btn btn-info" href="{{ route('books.edit',$bookDetail->book_id) }}">Edit</a>
-                {!! Form::open(['route' => ['books.destroy',$bookDetail->book_id], 'method' => 'DELETE']) !!}
-                {!! Form::token() !!}
-                    {!! Form::submit('Delete',['class'=> 'btn btn-danger']) !!}
-                {!! Form::close() !!}
+                {{-- @can('book.update') --}}
+                    <a class="btn btn-info" href="{{ route('books.edit',$bookDetail->book_id) }}">Edit</a>
+                {{-- @endcan --}}
+                {{-- @can('book.delete') --}}
+                    {!! Form::open(['route' => ['books.destroy',$bookDetail->book_id], 'method' => 'DELETE']) !!}
+                    {!! Form::token() !!}
+                        {!! Form::submit('Delete',['class'=> 'btn btn-danger']) !!}
+                    {!! Form::close() !!}
+                {{-- @endcan --}}
             </td>
         </tr>
     @endforeach

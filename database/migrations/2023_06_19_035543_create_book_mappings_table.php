@@ -13,13 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('variant_mappings', function (Blueprint $table) {
-            $table->bigIncrements('variant_mapping_id');
-            $table->unsignedBigInteger('variant_id');
-            $table->foreign('variant_id')->references('variant_id')->on('variants')->onDelete('cascade');
+        Schema::create('book_mappings', function (Blueprint $table) {
+            $table->bigIncrements('category_mapping_id');
+            $table->unsignedBigInteger('cateogery_id');
+            $table->foreign('cateogery_id')->references('cateogery_id')->on('category_lists')->onDelete('cascade');
             $table->unsignedBigInteger('book_id');
             $table->foreign('book_id')->references('book_id')->on('book_lists')->onDelete('cascade');
-            $table->string('variant_type',100);
             $table->timestamps();
             $table->softDeletes();
         });
@@ -32,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('variant_mappings');
+        Schema::dropIfExists('book_mappings');
     }
 };

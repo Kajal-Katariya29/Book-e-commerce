@@ -28,21 +28,12 @@ class BookList extends Model
     }
 
     /**
-     * Get all the categoryList for the BookList
-     */
-
-    public function categoryList(): HasMany
-    {
-        return $this->hasMany(CategoryList::class);
-    }
-
-    /**
      * Get all of the variants for the BookList
      */
 
     public function variants(): HasMany
     {
-        return $this->hasMany(variant::class);
+        return $this->hasMany(VariantMapping::class,'book_id','book_id');
     }
 
      /**
@@ -54,4 +45,13 @@ class BookList extends Model
         return $this->hasMany(Rating::class);
     }
 
+    /**
+     * Get all of the categories for the BookList
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function categories(): HasMany
+    {
+        return $this->hasMany(CategoryMapping::class, 'book_id', 'book_id');
+    }
 }

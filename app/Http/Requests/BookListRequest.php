@@ -28,20 +28,24 @@ class BookListRequest extends FormRequest
             'description' => 'required',
             'author' => 'required|string|max:100',
             'price' => 'required|numeric',
-            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
-            // 'varianttype' => 'required|string|max:100',
+            // 'images' => 'image|required|mimes:jpeg,png,gif,jpg|max:2048',
+            'variant_id' => 'required',
+            'variant_type_name' => 'required',
+            'category_name' => 'required'
         ];
     }
 
     public function messages()
     {
         return[
-            'name.required' => 'The  name feild is required',
-            'description.required' => 'The  description feild is required',
-            'author.required' => 'The  authorasd name is must required',
-            'price.required' => 'The  price feild is required',
-            'images.required' => 'This image type is not allowed !!',
-            // 'varianttype.required' => 'This feild is required',
+            'name.required' => 'The  name feild is required !!',
+            'description.required' => 'The  description feild is required !!',
+            'author.required' => 'The  author name is must required !!',
+            'price.required' => 'The  price feild is required !!',
+            'images.required' => 'This feild is required !!',
+            'variant_id.required' => 'Please select variant name !!',
+            'variant_type_name.required' => 'Please select variant type name !!',
+            'category_name.required' => 'Please Select this feild !!'
         ];
     }
 }
