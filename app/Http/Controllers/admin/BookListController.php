@@ -6,10 +6,27 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\BookList;
 use App\Models\BookMedia;
+use App\Models\Variant;
+use App\Models\VariantType;
+use App\Models\VariantMapping;
+use App\Models\CategoryList;
+use App\Models\CategoryMapping;
+use App\Policies\BookPolicy;
+
 use App\Http\Requests\BookListRequest;
 
 class BookListController extends Controller
 {
+     /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -17,6 +34,8 @@ class BookListController extends Controller
      */
     public function index()
     {
+        $this->authorize('book.view');
+
         $bookDetails = BookList::orderby('book_id','desc')->get();
         return view('admin.BookList.index',compact('bookDetails'));
     }
@@ -28,7 +47,15 @@ class BookListController extends Controller
      */
     public function create()
     {
-        return view('admin.BookList.create');
+        $this->authorize('book.create');
+
+        $variant_type = Variant::select('variant_id','variant_type')->get()->pluck('variant_type','variant_id');
+
+        $variant_type_name = VariantType::select('variant_type_id', 'variant_type_name')->get()->pluck('variant_type_name', 'variant_type_id');
+
+        $category_name = CategoryList::select('cateogery_id','category_name')->where('category_parent_id','0')->get()->pluck('category_name','cateogery_id');
+
+        return view('admin.BookList.create',compact('variant_type','variant_type_name','category_name'));
     }
 
     /**
@@ -39,7 +66,8 @@ class BookListController extends Controller
      */
     public function store(BookListRequest $request)
     {
-        $bookList = BookList::create($request->only(['name','description','price','author']));
+        $bookList = BookList::create($request->only(['name','description','author']));
+
         if ($images = $request->file('images')) {
             foreach ($images as $image) {
                 $filename = $image->getClientOriginalName();
@@ -50,6 +78,27 @@ class BookListController extends Controller
                 ]);
             }
         }
+
+        VariantMapping::create([
+            'variant_id' => $request->variant_id,
+            'book_id' => $bookList->book_id,
+            'variant_type_id' => $request->variant_type_id,
+            'book_price' => $request->price
+        ]);
+
+        if($request->subCategory_name){
+            CategoryMapping::create([
+                'book_id' => $bookList->book_id,
+                'cateogery_id' => $request->subCategory_name
+            ]);
+        }
+        else{
+            CategoryMapping::create([
+                'book_id' => $bookList->book_id,
+                'cateogery_id' => $request->category_name
+            ]);
+        }
+
         return redirect()->route('books.index')->with('success','Book Record created successfully !!');
     }
 
@@ -64,6 +113,13 @@ class BookListController extends Controller
         //
     }
 
+    public function fetchCategory(Request $requset)
+    {
+        $fetchCategoryData = CategoryList::where('category_parent_id',$requset->categoryId)->get(['cateogery_id','category_name']);
+
+        return response()->json($fetchCategoryData);
+    }
+
     /**
      * Show the form for editing the specified resource.
      *
@@ -72,8 +128,35 @@ class BookListController extends Controller
      */
     public function edit($id)
     {
-        $bookData = BookList::with('bookMedia')->where('book_id',$id)->first();
-        return view('admin.BookList.edit',compact('bookData'));
+        // $this->authorize('book.book_edit');
+
+        $bookData = BookList::where('book_id',$id)->with('variants','bookMedia','categories')->first();
+        $categoryData = CategoryList::where('cateogery_id',$bookData->categories->pluck('cateogery_id'))->with('subCategory')->get();
+
+        $catData = [];
+        $subData = [];
+        foreach ($categoryData as $category) {
+            $subcategories = $category->subCategory;
+            foreach ($subcategories as $subcategory) {
+                $catData[] = $subcategory->category_parent_id;
+            }
+        }
+
+
+        foreach ($categoryData as $category) {
+            $subcategories = $category->subCategory;
+            foreach ($subcategories as $subcategory) {
+                $subData[] = $subcategory->cateogery_id;
+            }
+        }
+
+        $subCatData = CategoryList::where('category_parent_id',$catData)->select('cateogery_id','category_name')->get()->pluck('category_name','cateogery_id');
+        $subCategory = CategoryList::where('category_parent_id',$subData)->select('cateogery_id','category_name')->get()->pluck('category_name','cateogery_id');
+        $variant_type = Variant::select('variant_id','variant_type')->get()->pluck('variant_type','variant_id');
+        $variant_type_name = VariantType::select('variant_type_id','variant_type_name')->get()->pluck('variant_type_name','variant_type_id');
+        $category_name = CategoryList::where('category_parent_id','0')->select('cateogery_id','category_name')->get()->pluck('category_name','cateogery_id');
+
+        return view('admin.BookList.edit',compact('bookData','variant_type','variant_type_name','category_name','subCatData','catData','subCategory','subData'));
     }
 
     /**
@@ -85,7 +168,7 @@ class BookListController extends Controller
      */
     public function update(BookListRequest $request, $id)
     {
-        $bookDetail = BookList::where('book_id',$id)->update($request->only(['name','description','price','author']));
+        $bookData = BookList::where('book_id',$id)->update($request->only(['name','description','author']));
 
         if ($images = $request->file('images')) {
             foreach ($images as $image) {
@@ -98,7 +181,30 @@ class BookListController extends Controller
             }
         }
 
-        if(empty($bookDetail)){
+        VariantMapping::where('book_id',$id)->delete();
+        foreach($request->variant_type_name as $variants){
+            $variant_mapping = new VariantMapping();
+            $variant_mapping->variant_id = $request->variant_id;
+            $variant_mapping->book_id = $id;
+            $variant_mapping->variant_type_id = $variants;
+            $variant_mapping->book_price = $request->price;
+            $variant_mapping->save();
+        }
+
+        if($request->subCategory_name){
+            CategoryMapping::where('book_id',$id)->update([
+                'book_id' => $id,
+                'cateogery_id' => $request->subCategory_name
+            ]);
+        }
+        else{
+            CategoryMapping::where('book_id',$id)->update([
+                'book_id' => $id,
+                'cateogery_id' => $request->category_name
+            ]);
+        }
+
+        if(empty($bookData)){
             return redirect()->route('books.index')->with('error','The Data is not available !!');
         }
 
@@ -113,9 +219,13 @@ class BookListController extends Controller
      */
     public function destroy($id)
     {
-        $bookDetail = BookList::where('book_id',$id)->delete();
+        $this->authorize('book.book_delete');
 
-        if(empty($bookDetail)){
+        $bookData = BookList::where('book_id',$id)->delete();
+        $variantData = VariantMapping::where('book_id',$id)->delete();
+        $categoryData = CategoryMapping::where('book_id',$id)->delete();
+
+        if(empty($bookData)){
             return redirect()->route('books.index')->with('error','The Data is not available !!');
         }
         return redirect()->route('books.index')->with('success','Book Record deleted successfully !!');

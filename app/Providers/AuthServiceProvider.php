@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\Post;
+use App\Policies\PostPolicy;
+use App\Policies\BookPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 
@@ -25,6 +28,9 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        //
+        Gate::define('book.view', [BookPolicy::class, 'view']);
+        Gate::define('book.create', [BookPolicy::class, 'create']);
+        Gate::define('book.update', [BookPolicy::class, 'update']);
+        Gate::define('book.delete', [BookPolicy::class, 'delete']);
     }
 }

@@ -34,19 +34,19 @@
         <th>Variant_type_name</th>
         <th width="280px">Action</th>
     </tr>
-    {{-- @foreach ($variants as $variant)
+    @foreach ($variantTypeNames as $variantTypeName)
         <tr>
-            <td>{{ $variant->variant_id }}</td>
-            <td>{{ $variant->variant_type }}</td>
+            <td>{{ $variantTypeName->variant_type_id }}</td>
+            <td>{{ $variantTypeName->variant_type_name }}</td>
             <td>
-                <a class="btn btn-info" href="{{ route('variants.edit',$variant->variant_id) }}">Edit</a>
-                {!! Form::open(['route' => ['variants.destroy',$variant->variant_id], 'method' => 'DELETE']) !!}
+                <a class="btn btn-info" href="{{ route('variant-type.edit',$variantTypeName->variant_type_id) }}">Edit</a>
+                {!! Form::open(['route' => ['variant-type.destroy',$variantTypeName->variant_type_id], 'method' => 'DELETE']) !!}
                 {!! Form::token() !!}
                     {!! Form::submit('Delete',['class'=> 'btn btn-danger']) !!}
                 {!! Form::close() !!}
             </td>
         </tr>
-    @endforeach --}}
+    @endforeach
 </table>
 @endsection
 

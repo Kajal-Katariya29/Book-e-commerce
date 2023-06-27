@@ -6,9 +6,20 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\VariantType;
 use App\Models\Variant;
+use App\Http\Requests\VariantTypeRequest;
 
 class VariantTypeController extends Controller
 {
+     /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -16,7 +27,8 @@ class VariantTypeController extends Controller
      */
     public function index()
     {
-        return view('admin.VariantTypes.index');
+        $variantTypeNames = VariantType::orderby('variant_type_id','desc')->get();
+        return view('admin.VariantTypes.index',compact('variantTypeNames'));
     }
 
     /**
@@ -26,8 +38,8 @@ class VariantTypeController extends Controller
      */
     public function create()
     {
-        $variant = Variant::all();
-        return view('admin.VariantTypes.create',compact('variant'));
+        $variant_type = Variant::select('variant_id','variant_type')->get()->pluck('variant_type','variant_id');
+        return view('admin.VariantTypes.create',compact('variant_type'));
     }
 
     /**
@@ -36,9 +48,9 @@ class VariantTypeController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(VariantTypeRequest $request)
     {
-        VariantType::create($request->only('variant_type_name'));
+        VariantType::create($request->only(['variant_id','variant_type_name']));
         return redirect()->route('variant-type.index');
     }
 
@@ -61,7 +73,12 @@ class VariantTypeController extends Controller
      */
     public function edit($id)
     {
-        //
+        $variantTypeData = VariantType::where('variant_type_id',$id)->first();
+
+        $variant_type = Variant::select('variant_id','variant_type')->get()->pluck('variant_type','variant_id');
+
+        return view('admin.VariantTypes.edit',compact('variantTypeData','variant_type'));
+
     }
 
     /**
@@ -71,9 +88,16 @@ class VariantTypeController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(VariantTypeRequest $request, $id)
     {
-        //
+        $variantTypeData = VariantType::where('variant_type_id',$id)->update($request->only(['variant_id','variant_type_name']));
+
+        if(empty($variantTypeData)){
+
+            return redirect()->route('variant-type.index')->with('error','The Data is not available !!');
+        }
+
+        return redirect()->route('variant-type.index')->with('success','Variant Type Data is Updated successfully !!');
     }
 
     /**
@@ -84,6 +108,13 @@ class VariantTypeController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $variantTypeData = VariantType::where('variant_type_id',$id)->delete();
+
+        if(empty($variantTypeData)){
+
+            return redirect()->route('variant-type.index')->with('error','The Data is not available !!');
+        }
+
+        return redirect()->route('variant-type.index')->with('success','Variant Type Data is deleted successfully !!');
     }
 }

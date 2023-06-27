@@ -5,9 +5,20 @@ namespace App\Http\Controllers\admin\variants;
 use App\Http\Controllers\Controller;
 use App\Models\Variant;
 use Illuminate\Http\Request;
+use App\Http\Requests\VariantsRequest;
 
 class VariantsController extends Controller
 {
+     /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -35,11 +46,9 @@ class VariantsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(VariantsRequest $request)
     {
-        Variant::create([
-            'variant_type' => $request->variant_type,
-        ]);
+        Variant::create($request->only('variant_type'));
 
         return redirect()->route('variants.index')->with('success','Variant Record created successfully !!');
     }
@@ -74,11 +83,11 @@ class VariantsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(VariantsRequest $request, $id)
     {
-        $variantDetail = Variant::where('variant_id',$id)->update($request->only(['variant_type']));
+        $variantData = Variant::where('variant_id',$id)->update($request->only('variant_type'));
 
-        if(empty($variantDetail)){
+        if(empty($variantData)){
 
             return redirect()->route('admin.Variants.index')->with('error','The Data is not available !!');
 
@@ -95,9 +104,9 @@ class VariantsController extends Controller
      */
     public function destroy($id)
     {
-        $variantDetail = Variant::where('variant_id',$id)->delete();
+        $variantData = Variant::where('variant_id',$id)->delete();
 
-        if(empty($variantDetail)){
+        if(empty($variantData)){
 
             return redirect()->route('variants.index')->with('error','The Data is not available !!');
 
