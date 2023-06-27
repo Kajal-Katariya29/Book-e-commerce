@@ -15,7 +15,7 @@ class VariantMapping extends Model
 
     protected $primaryKey = 'variant_mapping_id';
 
-    protected $fillable = ['variant_mapping_id','variant_id','book_id','variant_type','created_at','updated_at','deleted_at'];
+    protected $fillable = ['variant_mapping_id','variant_id','book_id','variant_type_id','book_price','created_at','updated_at','deleted_at'];
 
 /**
  * Get the variant that owns the VariantMapping

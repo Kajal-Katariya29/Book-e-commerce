@@ -8,6 +8,15 @@
 <div class="container-fluid m-5">
     <h1 class="mt-4"> Add BookDetail </h1>
 </div>
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 <div class="row m-5">
     {!! Form::open(['route' => 'books.store', "method" => "post", 'enctype' => 'multipart/form-data']) !!}
     {!! Form::token() !!}
@@ -22,14 +31,17 @@
 
     $(document).ready(function(){
 
-        $('#addVariants').on("click",function(){
-            var html = $('#inputVariant').html();
-            var newRow = $('<tr>').append(html);
-            newRow.insertAfter($('table tr:last'));
+        $('.rowAdd').on("click",function(){
+            // newRowAdd =
+            // '<tr><td> {!! Form::select('variant_id[]',$variant_type, null, ['placeholder' => 'Select Variant...', 'class' => 'form-select mt-2']) !!}</td>' +
+            // '<td>{!! Form::select('variant_type_name[]', $variant_type_name, null, ['placeholder' => 'Select Variant...','class' => 'form-select mt-2']) !!}</td>' +
+            // '<td>{!! Form::text("price[]", null, ['class' => 'form-control price mt-1']) !!}</td>' +
+            // '<td> <button type="button" class="btn btn-secondary rowDelete" id="rowAdd">-</button> </tr>';
+                $('#inputVariant').append('<tr>'+$('#inputVariant').find('tr:last').html()+'</tr>')
         });
 
-        $(document).on("click", "#rowDelete", function() {
-            $(this).closest('tr').remove();
+        $(document).on("click", ".rowDelete", function() {
+            $(this).parent().parent().remove();
         });
 
         $('.select2').select2();

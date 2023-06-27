@@ -36,7 +36,6 @@
         <th>Book_name</th>
         <th>Book_Description</th>
         <th>Book_author</th>
-        <th>Book_price</th>
         {{-- @can('book.create') --}}
             <th width="280px">Action</th>
         {{-- @endcan --}}
@@ -47,7 +46,6 @@
             <td>{{ $bookDetail->name }}</td>
             <td>{{ $bookDetail->description }}</td>
             <td>{{ $bookDetail->author }}</td>
-            <td>{{ $bookDetail->price }}</td>
             <td>
                 {{-- @can('book.update') --}}
                     <a class="btn btn-info" href="{{ route('books.edit',$bookDetail->book_id) }}">Edit</a>

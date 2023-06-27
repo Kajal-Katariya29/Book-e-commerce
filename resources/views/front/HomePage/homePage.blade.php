@@ -33,18 +33,7 @@
                                             Language :{{ $variant->variant_type_id }}
                                         </div>
                                         <div class="p-2 bd-highlight">
-                                            @if ($variant->variant_type_id == 2)
-                                                Price: {{$book->price + 500.000}}
-                                            @endif
-                                            @if ($variant->variant_type_id == 3)
-                                                Price: {{$book->price + 300.000}}
-                                            @endif
-                                            @if ($variant->variant_type_id == 1)
-                                                Price: {{$book->price}}
-                                            @endif
-                                            @if ($variant->variant_type_id == 4)
-                                                Price: {{$book->price + 100.000}}
-                                            @endif
+                                           Price : {{ $variant->book_price }}
                                         </div>
                                     </div>
                                 </div>

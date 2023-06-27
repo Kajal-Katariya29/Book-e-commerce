@@ -29,6 +29,7 @@ Route::get('/', function () {
 });
 
 Route::resource('/books', BookListController::class);
+Route::post('/delete-variant-type/{id}',[BookListController::class,'deleteVariantType'])->name('books.delete.variant');
 Route::post('/delete-image/{id}',[BookListController::class,'deleteImage'])->name('books.delete.image');
 Route::resource('/variants', VariantsController::class);
 Route::resource('/variant-type',VariantTypeController::class);

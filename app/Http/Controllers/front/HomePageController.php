@@ -12,6 +12,7 @@ class HomePageController extends Controller
 {
     public function viewHomePage(){
         $bookData = BookList::with('bookMedia','variants')->get();
+        // dd($bookData);
         return view('front.HomePage.homePage',compact('bookData'));
     }
 }

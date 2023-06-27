@@ -49,13 +49,15 @@ class BookListController extends Controller
     {
         $this->authorize('book.create');
 
+        $bookData = BookList::with('variants','bookMedia','categories')->first();
+
         $variant_type = Variant::select('variant_id','variant_type')->get()->pluck('variant_type','variant_id');
 
         $variant_type_name = VariantType::select('variant_type_id', 'variant_type_name')->get()->pluck('variant_type_name', 'variant_type_id');
 
         $category_name = CategoryList::select('cateogery_id','category_name')->where('category_parent_id','0')->get()->pluck('category_name','cateogery_id');
 
-        return view('admin.BookList.create',compact('variant_type','variant_type_name','category_name'));
+        return view('admin.BookList.create',compact('variant_type','variant_type_name','category_name','bookData'));
     }
 
     /**
@@ -66,6 +68,7 @@ class BookListController extends Controller
      */
     public function store(BookListRequest $request)
     {
+        dd($request->all());
         $bookList = BookList::create($request->only(['name','description','author']));
 
         if ($images = $request->file('images')) {
@@ -79,12 +82,14 @@ class BookListController extends Controller
             }
         }
 
-        VariantMapping::create([
-            'variant_id' => $request->variant_id,
-            'book_id' => $bookList->book_id,
-            'variant_type_id' => $request->variant_type_id,
-            'book_price' => $request->price
-        ]);
+        foreach($request->variant_type_name as $variants){
+            $variant_mapping = new VariantMapping();
+            $variant_mapping->variant_id = $request->variant_id;
+            $variant_mapping->book_id = $bookList->book_id;
+            $variant_mapping->variant_type_id = $variants;
+            $variant_mapping->book_price = $request->price;
+            $variant_mapping->save();
+        }
 
         if($request->subCategory_name){
             CategoryMapping::create([
@@ -152,11 +157,12 @@ class BookListController extends Controller
 
         $subCatData = CategoryList::where('category_parent_id',$catData)->select('cateogery_id','category_name')->get()->pluck('category_name','cateogery_id');
         $subCategory = CategoryList::where('category_parent_id',$subData)->select('cateogery_id','category_name')->get()->pluck('category_name','cateogery_id');
+        $variants = VariantMapping::get();
         $variant_type = Variant::select('variant_id','variant_type')->get()->pluck('variant_type','variant_id');
         $variant_type_name = VariantType::select('variant_type_id','variant_type_name')->get()->pluck('variant_type_name','variant_type_id');
         $category_name = CategoryList::where('category_parent_id','0')->select('cateogery_id','category_name')->get()->pluck('category_name','cateogery_id');
 
-        return view('admin.BookList.edit',compact('bookData','variant_type','variant_type_name','category_name','subCatData','catData','subCategory','subData'));
+        return view('admin.BookList.edit',compact('bookData','variant_type','variant_type_name','category_name','subCatData','catData','subCategory','subData','variants'));
     }
 
     /**
@@ -181,14 +187,19 @@ class BookListController extends Controller
             }
         }
 
-        VariantMapping::where('book_id',$id)->delete();
-        foreach($request->variant_type_name as $variants){
-            $variant_mapping = new VariantMapping();
-            $variant_mapping->variant_id = $request->variant_id;
-            $variant_mapping->book_id = $id;
-            $variant_mapping->variant_type_id = $variants;
-            $variant_mapping->book_price = $request->price;
-            $variant_mapping->save();
+        // VariantMapping::where('book_id',$id)->delete();
+        $data = $request->all();
+        foreach($request->variant_id as $key=>$variant){
+            $variant = VariantMapping::where('variant_id',$data['variant_id'])->where('variant_type_id',$data['variant_type_name'])->first();
+            if(empty($variant)){
+                // dd("here");
+                $variant_mapping = new VariantMapping();
+                $variant_mapping->variant_id = $data['variant_id'][$key];
+                $variant_mapping->book_id = $id;
+                $variant_mapping->variant_type_id = $data['variant_type_name'][$key];
+                $variant_mapping->book_price = $data['price'][$key];
+                $variant_mapping->save();
+            }
         }
 
         if($request->subCategory_name){
@@ -219,10 +230,9 @@ class BookListController extends Controller
      */
     public function destroy($id)
     {
-        $this->authorize('book.book_delete');
+        // $this->authorize('book.book_delete');
 
         $bookData = BookList::where('book_id',$id)->delete();
-        $variantData = VariantMapping::where('book_id',$id)->delete();
         $categoryData = CategoryMapping::where('book_id',$id)->delete();
 
         if(empty($bookData)){
@@ -244,6 +254,14 @@ class BookListController extends Controller
         BookMedia::where('book_media_id',$id)->delete();
 
         return response()->json(['status','success']);
+
+    }
+
+    public function deleteVariantType($id){
+
+        $variant = VariantMapping::where('variant_type_id',$id)->delete();
+
+        return response()->json(['status' => 'success']);
 
     }
 }

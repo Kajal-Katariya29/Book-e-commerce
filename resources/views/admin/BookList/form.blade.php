@@ -17,30 +17,53 @@
     </div>
     <div class="col-12 mt-2">
         {!! Form::label("variantType", "Variant Type : ") !!}
-        <a class="btn btn-secondary" id="addVariants">Add Varaints</a>
         <table class="table table-bordered mt-3">
-            <tr>
+            <thead>
                 <th>Varint :</th>
                 <th>Variant Type :</th>
                 <th>Amout: </th>
                 <th>Action</th>
-            </tr>
-            <tr id="inputVariant" style="display: none;">
-                <td>
-                    {!! Form::select('variant_id',$variant_type, $bookData ? $bookData->variants->pluck('variant_id') : null, ['placeholder' => 'Select Variant...', 'class' => 'form-select mt-2']) !!}
-                </td>
-                <td>
-                    {!! Form::select('variant_type_name', $variant_type_name, $bookData ? $bookData->variants->pluck('variant_type_id') : null, ['placeholder' => 'Select Variant...','class' => 'form-select mt-2']) !!}
-                </td>
-                <td>
-                    {!! Form::text("price", null, ['class' => 'form-control price mt-1', 'id' => 'price']) !!}
-                </td>
-                <td>
-                    <button type="button" class="btn btn-secondary rowDelete" id="rowDelete">-</button>
-                </td>
-            </tr>
+            </thead>
+            {!! Form::hidden('removed_variant_mapping_id', null,['id'=>'removed_variant_mapping_id'] ) !!}
+            <tbody id="inputVariant">
+                @if(!empty($variants))
+                    @foreach ($variants as $variant)
+                        <tr>
+                            {!! Form::hidden('variant_mapping_id[]', $variant->variant_mapping_id ) !!}
+                            <td>
+                                {!! Form::select('variant_id[]',$variant_type, $variant ? $variant->variant_id : null, ['placeholder' => 'Select Variant...', 'class' => 'form-select mt-2']) !!}
+                            </td>
+                            <td>
+                                {!! Form::select('variant_type_name[]', $variant_type_name, $variant ? $variant->variant_type_id : null, ['placeholder' => 'Select Variant...','class' => 'form-select mt-2']) !!}
+                            </td>
+                            <td>
+                                {!! Form::text("price[]", $variant ? $variant->book_price : null, ['class' => 'form-control price mt-1']) !!}
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-secondary removeEditedRow" id="removeEditedRow" data-variant-id="{{ $variant->variant_mapping_id }}">-</button>
+                            </td>
+                        </tr>
+                    @endforeach
+                @endif
+                <tr>
+                    <td>
+                        {!! Form::select('variant_id[]',$variant_type, null, ['placeholder' => 'Select Variant...', 'class' => 'form-select mt-2']) !!}
+                    </td>
+                    <td>
+                        {!! Form::select('variant_type_name[]', $variant_type_name,  null, ['placeholder' => 'Select Variant...','class' => 'form-select mt-2']) !!}
+                    </td>
+                    <td>
+                        {!! Form::text("price[]", null, ['class' => 'form-control price mt-1']) !!}
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-secondary rowAdd" id="rowAdd">+</button>
+                        <button type="button" class="btn btn-secondary rowDelete" id="rowRemoe">-</button>
+                    </td>
+                </tr>
+            </tbody>
         </table>
     </div>
+
     <div class="col-6 mt-3">
         {!! Form::label('images', 'Book Images:') !!}
         {!! Form::file('images[]', ['class' => 'form-control', 'id' => 'images', 'multiple' => true]) !!}

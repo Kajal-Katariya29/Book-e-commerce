@@ -27,10 +27,10 @@ class BookListRequest extends FormRequest
             'name' => 'required|string|max:255',
             'description' => 'required',
             'author' => 'required|string|max:100',
-            'price' => 'required|numeric',
+            // 'price' => 'required|numeric',
             // 'images' => 'image|required|mimes:jpeg,png,gif,jpg|max:2048',
-            'variant_id' => 'required',
-            'variant_type_name' => 'required',
+            // 'variant_id' => 'required',
+            // 'variant_type_name' => 'required',
             'category_name' => 'required'
         ];
     }
@@ -43,8 +43,8 @@ class BookListRequest extends FormRequest
             'author.required' => 'The  author name is must required !!',
             'price.required' => 'The  price feild is required !!',
             'images.required' => 'This feild is required !!',
-            'variant_id.required' => 'Please select variant name !!',
-            'variant_type_name.required' => 'Please select variant type name !!',
+            // 'variant_id.required' => 'Please select variant name !!',
+            // 'variant_type_name.required' => 'Please select variant type name !!',
             'category_name.required' => 'Please Select this feild !!'
         ];
     }
