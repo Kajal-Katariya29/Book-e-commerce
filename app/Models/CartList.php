@@ -15,7 +15,7 @@ class CartList extends Model
 
     protected $primaryKey = 'cart_list_id';
 
-    protected $fillable = ['cart_list_id','user_id','book_id','created_at','updated_at','deleted_at'];
+    protected $fillable = ['cart_list_id','user_id','book_id','variant_type_id','quantity','book_price','created_at','updated_at','deleted_at'];
 
     /**
      * Get all of the booklist for the CartList

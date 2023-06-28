@@ -1,14 +1,19 @@
 
 <div class="row m-4" id="subCategories">
-    <div class="col-md-6">
+    <div class="col-md-4">
         {!! Form::label("name", "Book Name :") !!}
         {!! Form::text("name", null, ['class' => 'form-control bookname', 'id' => 'bookname']) !!}
         {!! $errors->first("name",'<span class="text-danger">:message</span>') !!}
     </div>
-    <div class="col-md-6">
+    <div class="col-md-4">
         {!! Form::label("author", "Book Author :") !!}
         {!! Form::text("author",null, ['class' => 'form-control author', 'id' => 'author']) !!}
         {!! $errors->first("author",'<span class="text-danger">:message</span>') !!}
+    </div>
+    <div class="col-md-4">
+        {!! Form::label("price", "Book Price :") !!}
+        {!! Form::text("price",null, ['class' => 'form-control price', 'id' => 'price']) !!}
+        {!! $errors->first("price",'<span class="text-danger">:message</span>') !!}
     </div>
     <div class="col-12">
         {!! Form::label("description", "Book Description :") !!}
@@ -29,7 +34,7 @@
                 @if(!empty($variants))
                     @foreach ($variants as $variant)
                         <tr>
-                            {!! Form::hidden('variant_mapping_id[]', $variant->variant_mapping_id ) !!}
+                            {!! Form::hidden('variant_mapping_id[]', $variant->variant_mapping_id ,['class'=>'variant_mapping_id']) !!}
                             <td>
                                 {!! Form::select('variant_id[]',$variant_type, $variant ? $variant->variant_id : null, ['placeholder' => 'Select Variant...', 'class' => 'form-select mt-2']) !!}
                             </td>
@@ -37,7 +42,7 @@
                                 {!! Form::select('variant_type_name[]', $variant_type_name, $variant ? $variant->variant_type_id : null, ['placeholder' => 'Select Variant...','class' => 'form-select mt-2']) !!}
                             </td>
                             <td>
-                                {!! Form::text("price[]", $variant ? $variant->book_price : null, ['class' => 'form-control price mt-1']) !!}
+                                {!! Form::text("book_price[]", $variant ? $variant->book_price : null, ['class' => 'form-control book_price mt-1']) !!}
                             </td>
                             <td>
                                 <button type="button" class="btn btn-secondary removeEditedRow" id="removeEditedRow" data-variant-id="{{ $variant->variant_mapping_id }}">-</button>
@@ -53,7 +58,7 @@
                         {!! Form::select('variant_type_name[]', $variant_type_name,  null, ['placeholder' => 'Select Variant...','class' => 'form-select mt-2']) !!}
                     </td>
                     <td>
-                        {!! Form::text("price[]", null, ['class' => 'form-control price mt-1']) !!}
+                        {!! Form::text("book_price[]", null, ['class' => 'form-control price mt-1']) !!}
                     </td>
                     <td>
                         <button type="button" class="btn btn-secondary rowAdd" id="rowAdd">+</button>

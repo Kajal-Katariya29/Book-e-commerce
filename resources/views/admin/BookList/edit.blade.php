@@ -35,34 +35,18 @@
             $('#inputVariant').append('<tr>'+$('#inputVariant').find('tr:last').html()+'</tr>')
         });
 
-        $(document).on("click", ".rowDelete", function() {
+        $(document).on("click", ".removeEditedRow", function() {
             $(this).parent().parent().remove();
+            var value = $(this).closest('tr').find('.variant_mapping_id').val()
+            var removeValue  = $('#removed_variant_mapping_id').val()
+            if(removeValue == '')
+            {
+                removeValue = value;
+            }else{
+            removeValue = removeValue +","+ value;
+            }
+            $('#removed_variant_mapping_id').val(removeValue)
         });
-
-        // $('.deleteEditedRow').on("click",function(){
-        //     console.log("here");
-        //     var variantId = $(this).attr('data-variant-id');
-        //     console.log(variantId);
-        //     var routeUrl = "/delete-variant-type/" + variantId;
-        //     console.log(routeUrl);
-        //     $.ajax({
-        //         url : routeUrl,
-        //         type: "POST",
-        //         data: {
-        //             variant_type_id: variantId,
-        //             _token: $('meta[name="csrf-token"]').attr('content')
-
-        //         },
-        //         success: function(response){
-        //             $(this).closest('tr').remove();
-        //             location.reload();
-        //         },
-        //         error: function(xhr, textStatus, errorThrown) {
-        //             console.log(textStatus);
-        //         }
-        //     });
-        // });
-
 
         $('.deleteImage').on('click',function(){
         var ImageId = $(this).data('image-id');

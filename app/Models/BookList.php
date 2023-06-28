@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -31,9 +32,9 @@ class BookList extends Model
      * Get all of the variants for the BookList
      */
 
-    public function variants(): HasMany
+    public function variants(): BelongsToMany
     {
-        return $this->hasMany(VariantMapping::class,'book_id','book_id');
+        return $this->belongsToMany(VariantType::class,'variant_mappings','book_id','variant_type_id')->withPivot('book_price','variant_mapping_id')->wherePivot('deleted_at',null);
     }
 
      /**

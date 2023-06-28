@@ -8,6 +8,8 @@ use App\Http\Controllers\admin\Role\RolePermissionController;
 use App\Http\Controllers\admin\Role\RoleUserController;
 use App\Http\Controllers\admin\variants\VariantsController;
 use App\Http\Controllers\admin\variants\VariantTypeController;
+use App\Http\Controllers\front\BookDetailPageController;
+use App\Http\Controllers\front\CartListController;
 use App\Http\Controllers\front\HomePageController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -39,9 +41,14 @@ Route::resource('/roles',RoleController::class);
 Route::resource('/permissions',PermissionController::class);
 Route::resource('/role-permission',RolePermissionController::class);
 Route::resource('/role-user',RoleUserController::class);
+Route::resource('/cart',CartListController::class);
 
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::get('/home-page',[HomePageController::class,'viewHomePage'])->name('view.homePage');
+
+Route::get('/book-detail-page/{id}',[BookDetailPageController::class,'bookDetail'])->name('view.bookDetail');
+
+

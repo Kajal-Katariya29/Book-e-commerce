@@ -68,8 +68,8 @@ class BookListController extends Controller
      */
     public function store(BookListRequest $request)
     {
-        dd($request->all());
-        $bookList = BookList::create($request->only(['name','description','author']));
+        // dd($request->all());
+        $bookList = BookList::create($request->only(['name','description','author','price']));
 
         if ($images = $request->file('images')) {
             foreach ($images as $image) {
@@ -82,13 +82,19 @@ class BookListController extends Controller
             }
         }
 
-        foreach($request->variant_type_name as $variants){
-            $variant_mapping = new VariantMapping();
-            $variant_mapping->variant_id = $request->variant_id;
-            $variant_mapping->book_id = $bookList->book_id;
-            $variant_mapping->variant_type_id = $variants;
-            $variant_mapping->book_price = $request->price;
-            $variant_mapping->save();
+        $data = $request->all();
+        $variantIds = $data['variant_id'];
+        $variantTypeNames = $data['variant_type_name'];
+        foreach ($variantIds as $key => $variantId) {
+            $variantTypeName = $variantTypeNames[$key];
+            if ($variantId !== null) {
+                $variantMapping = new VariantMapping();
+                $variantMapping->variant_id = $variantId;
+                $variantMapping->book_id = $bookList->book_id;
+                $variantMapping->variant_type_id = $variantTypeName;
+                $variantMapping->book_price = $data['book_price'][$key];
+                $variantMapping->save();
+            }
         }
 
         if($request->subCategory_name){
@@ -174,7 +180,7 @@ class BookListController extends Controller
      */
     public function update(BookListRequest $request, $id)
     {
-        $bookData = BookList::where('book_id',$id)->update($request->only(['name','description','author']));
+        $bookData = BookList::where('book_id',$id)->update($request->only(['name','description','author','price']));
 
         if ($images = $request->file('images')) {
             foreach ($images as $image) {
@@ -187,18 +193,29 @@ class BookListController extends Controller
             }
         }
 
-        // VariantMapping::where('book_id',$id)->delete();
         $data = $request->all();
-        foreach($request->variant_id as $key=>$variant){
-            $variant = VariantMapping::where('variant_id',$data['variant_id'])->where('variant_type_id',$data['variant_type_name'])->first();
-            if(empty($variant)){
-                // dd("here");
-                $variant_mapping = new VariantMapping();
-                $variant_mapping->variant_id = $data['variant_id'][$key];
-                $variant_mapping->book_id = $id;
-                $variant_mapping->variant_type_id = $data['variant_type_name'][$key];
-                $variant_mapping->book_price = $data['price'][$key];
-                $variant_mapping->save();
+        $removed_variant_mapping_id = explode(",",$data['removed_variant_mapping_id']);
+        if(count($removed_variant_mapping_id)>0)
+        {
+            VariantMapping::whereIn('variant_mapping_id',$removed_variant_mapping_id)->delete();
+        }
+        $variantIds = $data['variant_id'];
+        $variantTypeNames = $data['variant_type_name'];
+
+        foreach ($variantIds as $key => $variantId) {
+            $variantTypeName = $variantTypeNames[$key];
+            if ($variantId !== null) {
+            $variant_mapping_id = $data['variant_mapping_id'][$key];
+            $variantMapping = VariantMapping::where('variant_mapping_id', $variant_mapping_id)->first();
+
+                if (!$variantMapping) {
+                    $variantMapping = new VariantMapping();
+                }
+                    $variantMapping->variant_id = $variantId;
+                    $variantMapping->book_id = $id;
+                    $variantMapping->variant_type_id = $variantTypeName;
+                    $variantMapping->book_price = $data['book_price'][$key];
+                    $variantMapping->save();
             }
         }
 
