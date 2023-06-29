@@ -42,6 +42,8 @@ Route::resource('/permissions',PermissionController::class);
 Route::resource('/role-permission',RolePermissionController::class);
 Route::resource('/role-user',RoleUserController::class);
 Route::resource('/cart',CartListController::class);
+Route::get('/cart-view/{id}',[CartListController::class,'cartView'])->name('view-cart');
+Route::get('/check-out',[CartListController::class,'checkOut'])->name('view-checkOut');
 
 Auth::routes();
 

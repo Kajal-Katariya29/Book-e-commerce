@@ -4,7 +4,10 @@ namespace App\Http\Controllers\front;
 
 use App\Http\Controllers\Controller;
 use App\Models\CartList;
+use App\Models\BookList;
+use App\Models\VariantType;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CartListController extends Controller
 {
@@ -15,7 +18,8 @@ class CartListController extends Controller
      */
     public function index()
     {
-        return view('front.HomePage.cartList');
+        $cartLists = CartList::with('books.bookMedia','variants','user')->where('user_id',Auth::user()->user_id)->get();
+        return view('front.HomePage.cartList',compact('cartLists'));
     }
 
     /**
@@ -36,8 +40,16 @@ class CartListController extends Controller
     public function store(Request $request)
     {
         $cartData = CartList::create($request->only(['user_id','book_id','variant_type_id','book_price','quantity']));
+        // $cartQuantity = CartList::where('book_id', $request->book_id)->where('user_id', $request->user_id)->first();
 
-        return response()->json(['success' => true]);
+        // if(!empty($cartQuantity)){
+        //     $cartData = CartList::create($request->only(['user_id','book_id','variant_type_id','book_price','quantity']));
+        // }
+        // else{
+        //     $cartQuantity->quantity =  $cartQuantity->quantity + 1;
+        // }
+
+        return response()->json(['success' => true, ]);
 
     }
 
@@ -72,7 +84,8 @@ class CartListController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $cartData = CartList::where('cart_list_id',$id)->update($request->only(['quantity']));
+        return response()->json(['success' => true, ]);
     }
 
     /**
@@ -83,6 +96,12 @@ class CartListController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $cartData = CartList::where('cart_list_id',$id)->delete();
+
+    }
+
+    public function checkOut(){
+        return view('front.HomePage.checkOutPage');
     }
 }
+

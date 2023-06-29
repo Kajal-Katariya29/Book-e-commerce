@@ -26,4 +26,9 @@ class VariantType extends Model
     {
         return $this->belongsTo(Variant::class);
     }
+
+    public function books()
+    {
+        return $this->belongsToMany(BookList::class, 'cart_lists', 'variant_type_id', 'book_id')->withPivot('quantity','book_price')->wherePivot('deleted_at',null);
+    }
 }

@@ -70,20 +70,10 @@
 
         $('.addToCart').on("click",function(){
             var book_id = $('.bookId').val();
-            console.log(book_id);
             var quantity = $('.quantity').val();
-            console.log(quantity);
-
             var book_price = $('#bookPrice').text();
-            console.log(book_price);
-
             var variant_type_id = $('.clicked').find('p').attr('value');
-            console.log(variant_type_id);
-
             var user_id = $('.userId').val();
-            console.log(user_id);
-
-
             $.ajax({
                 url: "{{ route('cart.store') }}",
                 type: "POST",
@@ -96,7 +86,7 @@
                     _token: $('meta[name="csrf-token"]').attr('content')
                 },
                 success: function(response) {
-                    console.log("hello");
+                    window.location.href = "{{ route('cart.index') }}";
                 },
                 error: function(xhr, textStatus, errorThrown) {
                     console.log(textStatus);
@@ -106,6 +96,8 @@
     });
     </script>
 @endsection
+
+
 
 
 

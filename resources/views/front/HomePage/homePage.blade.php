@@ -60,6 +60,7 @@
 @endsection
 
 @section('scripts')
+
     <script>
         $(document).ready(function(){
             $('#showContent').on("click",function(){

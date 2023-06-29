@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CartList extends Model
 {
@@ -24,6 +25,26 @@ class CartList extends Model
      */
     public function books(): HasMany
     {
-        return $this->hasMany(BookList::class);
+        return $this->hasMany(BookList::class,'book_id','book_id');
     }
+
+   /**
+    * Get the user that owns the CartList
+    *
+    * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+    */
+   public function user(): BelongsTo
+   {
+       return $this->belongsTo(User::class, 'user_id', 'user_id');
+   }
+
+   /**
+    * Get all of the variants for the CartList
+    *
+    * @return \Illuminate\Database\Eloquent\Relations\HasMany
+    */
+   public function variants(): HasMany
+   {
+       return $this->hasMany(VariantType::class, 'variant_type_id', 'variant_type_id');
+   }
 }

@@ -55,4 +55,9 @@ class BookList extends Model
     {
         return $this->hasMany(CategoryMapping::class, 'book_id', 'book_id');
     }
+
+    public function variantTypes(): BelongsToMany
+    {
+        return $this->belongsToMany(VariantType::class, 'cart_lists', 'book_id', 'variant_type_id')->withPivot('book_price','quantity','cart_list_id')->wherePivot('deleted_at',null);
+    }
 }
