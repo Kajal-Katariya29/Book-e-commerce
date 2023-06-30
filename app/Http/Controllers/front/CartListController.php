@@ -39,15 +39,15 @@ class CartListController extends Controller
      */
     public function store(Request $request)
     {
-        $cartData = CartList::create($request->only(['user_id','book_id','variant_type_id','book_price','quantity']));
-        // $cartQuantity = CartList::where('book_id', $request->book_id)->where('user_id', $request->user_id)->first();
+        $cartQuantity = CartList::where('book_id', $request->book_id)->where('user_id', $request->user_id)->where('variant_type_id',$request->variant_type_id)->first();
 
-        // if(!empty($cartQuantity)){
-        //     $cartData = CartList::create($request->only(['user_id','book_id','variant_type_id','book_price','quantity']));
-        // }
-        // else{
-        //     $cartQuantity->quantity =  $cartQuantity->quantity + 1;
-        // }
+        if(empty($cartQuantity)){
+            $cartData = CartList::create($request->only(['user_id','book_id','variant_type_id','book_price','quantity']));
+        }
+        else{
+            $cartQuantity->quantity =  $cartQuantity->quantity + 1;
+            $cartQuantity->save();
+        }
 
         return response()->json(['success' => true, ]);
 
@@ -98,10 +98,6 @@ class CartListController extends Controller
     {
         $cartData = CartList::where('cart_list_id',$id)->delete();
 
-    }
-
-    public function checkOut(){
-        return view('front.HomePage.checkOutPage');
     }
 }
 

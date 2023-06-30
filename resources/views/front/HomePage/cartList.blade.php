@@ -7,6 +7,7 @@
 @section('body')
 
 @include('front.HomePage.navbaar')
+
 <div class="container pt-5">
     <h3>Cart List</h3>
     @php
@@ -62,7 +63,7 @@
                     Total Amount : {{ $totalAmount }}
                 </div>
                 <div class="p-2 bd-highlight">
-                    <a class="btn btn-warning px-5" href="{{ route('view-checkOut') }}"> Place Order </a>
+                    <a class="btn btn-warning px-5" href="{{ route('view-checkOut') }}"> Check Out </a>
                 </div>
             </div>
         </div>

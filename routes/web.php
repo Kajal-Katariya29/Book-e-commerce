@@ -10,6 +10,7 @@ use App\Http\Controllers\admin\variants\VariantsController;
 use App\Http\Controllers\admin\variants\VariantTypeController;
 use App\Http\Controllers\front\BookDetailPageController;
 use App\Http\Controllers\front\CartListController;
+use App\Http\Controllers\front\CheckOutPageController;
 use App\Http\Controllers\front\HomePageController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -43,7 +44,10 @@ Route::resource('/role-permission',RolePermissionController::class);
 Route::resource('/role-user',RoleUserController::class);
 Route::resource('/cart',CartListController::class);
 Route::get('/cart-view/{id}',[CartListController::class,'cartView'])->name('view-cart');
-Route::get('/check-out',[CartListController::class,'checkOut'])->name('view-checkOut');
+Route::get('/check-out',[CheckOutPageController::class,'checkOut'])->name('view-checkOut');
+Route::post('/check-out-store',[CheckOutPageController::class,'store'])->name('checkOut.store');
+Route::post('/check-out-update',[CheckOutPageController::class, 'update'])->name('checkOut.update');
+Route::get('/check-out-create-edit/{id}',[CheckOutPageController::class,'createEdit'])->name('checkOut.create.edit');
 
 Auth::routes();
 
