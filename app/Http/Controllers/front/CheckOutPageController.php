@@ -17,8 +17,7 @@ class CheckOutPageController extends Controller
         return view('front.HomePage.checkOutPage',compact('carts','addressdata'));
     }
 
-    public function createEdit($id = null){
-        $addressData = null;
+    public function createEdit($id){
         if(!empty($id)){
             $addressData = Address::where('address_id',$id)->first();
         }
@@ -27,18 +26,19 @@ class CheckOutPageController extends Controller
 
     public function store(CheckOutRequest $request)
     {
-        Address::create($request->only(['first_name','last_name','phone_number','email_id','address','country','city','state','pincode','user_id']));
-
-        return view('front.HomePage.payment');
+        $address =  Address::create($request->only(['first_name','last_name','phone_number','email_id','address','country','city','state','pincode','user_id']));
+        $addressdata = Address::where('address_id',$address->address_id)->first();
+        return view('front.HomePage.placeOrder',compact('addressdata'));
     }
 
     public function update(CheckOutRequest $request){
-
         $data = $request->all();
-
-        Address::find($request->id)->update($data);
-
-        return view('front.HomePage.checkOutPage');
+        $address = Address::find($request->id)->update($data);
+        $addressdata = Address::where('address_id',$request->id)->first();
+        return view('front.HomePage.placeOrder',compact('addressdata'));
     }
 
+    public function delieverAddress(){
+        return response()->json(['success' => 'true']);
+    }
 }

@@ -12,6 +12,7 @@ use App\Http\Controllers\front\BookDetailPageController;
 use App\Http\Controllers\front\CartListController;
 use App\Http\Controllers\front\CheckOutPageController;
 use App\Http\Controllers\front\HomePageController;
+use App\Http\Controllers\front\PlaceOrderController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -47,7 +48,11 @@ Route::get('/cart-view/{id}',[CartListController::class,'cartView'])->name('view
 Route::get('/check-out',[CheckOutPageController::class,'checkOut'])->name('view-checkOut');
 Route::post('/check-out-store',[CheckOutPageController::class,'store'])->name('checkOut.store');
 Route::post('/check-out-update',[CheckOutPageController::class, 'update'])->name('checkOut.update');
-Route::get('/check-out-create-edit/{id}',[CheckOutPageController::class,'createEdit'])->name('checkOut.create.edit');
+Route::get('/check-out-create',[CheckOutPageController::class,'createEdit'])->name('checkOut.create');
+Route::get('/check-out-edit/{id}',[CheckOutPageController::class,'createEdit'])->name('checkOut.edit');
+Route::get('/deliever-address',[CheckOutPageController::class,'delieverAddress'])->name('deliever.address');
+
+Route::get('/place-order/{id}',[PlaceOrderController::class,'placeOrder'])->name('view-place-order');
 
 Auth::routes();
 
