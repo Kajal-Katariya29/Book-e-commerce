@@ -13,7 +13,8 @@
         @endphp
         <div class="row pt-5">
             <div class="col-md-6 border">
-                <h3> Address Information </h3>
+                <h3>Shipping Address Information </h3>
+                <input type="hidden" name="address_id" value="{{ $addressdata->address_id }}" class="addressId">
                 <div class="d-flex flex-column pt-2">
                     <div class="p-2">
                         Name : {{ $addressdata->first_name }} {{ $addressdata->last_name }}
@@ -54,10 +55,10 @@
                         @foreach ($cartlists as $cart)
                             <tr>
                                 @foreach ($cart->books as $book)
-                                    <td>{{ $book->name }}</td>
+                                    <td value={{ $book->book_id }}>{{ $book->name }}</td>
                                 @endforeach
                                 @foreach ($cart->variants as $variant)
-                                    <td> {{ $variant->variant_type_name }} </td>
+                                    <td value={{ $variant->variant_type_id }}> {{ $variant->variant_type_name }} </td>
                                 @endforeach
                                 <td>{{ $cart->quantity  }}</td>
                                 <td>{{ $cart->book_price }}</td>
@@ -85,17 +86,6 @@
         <div class="addressContainer">
             <div class="row pt-3">
                 <div class="col-md-6">
-                    <label for="shippingAddress" class="form-label">Choose Your shipping Address : </label>
-                    <select id="shippingAddress" class="form-select shippingAddress" name="shippping_address_id">
-                        <option value="">Select address</option>
-                        @foreach ($addresses as $address)
-                            <option
-                                value="{{ $address->address_id }}">
-                                {{ $address->address }} , {{ $address->country }} , {{ $address->state }} , {{ $address->city }} , {{ $address->pincode }} </option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col-md-6">
                     <label for="billingAddress" class="form-label">Choose your Billing address : </label>
                     <select id="billingAddress" class="form-select billingAddress" name="billing_address_id" required>
                         <option value="">Select address</option>
@@ -111,7 +101,7 @@
         <div class="row pt-3">
             <h4> Payment Method </h4>
             <div class="form-check">
-                <input class="form-check-input" type="radio" name="defaultSelected" id="cod" value="COD">
+                <input class="form-check-input" type="radio" name="paymentType" id="cod" value="COD">
                 <label class="form-check-label" for="cod">
                      COD
                 </label>
@@ -147,11 +137,45 @@
         });
 
         $('.placeOrder').on("click",function(){
-            var shippping_address_id = $('.shippingAddress').val();
+            var shippping_address_id = $('.addressId').val();
             var billing_address_id = $('.billingAddress').val();
             var total_amount = $('.totalAmount').text();
-            var payment_type = $("input[name='defaultSelected']:checked").val();
+            var payment_type = $("input[name='paymentType']:checked").val();
+            var routeUrl = "/place-order-store";
+            var cartLists = [];
 
+            $('table tbody tr').each(function(){
+                var productName = $(this).find('td:nth-child(1)').attr('value');
+                var quantity = $(this).find('td:nth-child(3)').text();
+                var price = $(this).find('td:nth-child(5)').text();
+                var variant = $(this).find('td:nth-child(2)').attr('value');
+
+                cartLists.push({
+                    product_name: productName,
+                    quantity: quantity,
+                    price: price,
+                    variant: variant
+                });
+            });
+
+            $.ajax({
+            url: routeUrl,
+            type: "post",
+                data: {
+                    shippping_address_id: shippping_address_id,
+                    billing_address_id: billing_address_id,
+                    total_amount: total_amount,
+                    payment_type: payment_type,
+                    cartLists: cartLists,
+                    _token: $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                        window.location.href = "/order-list";
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    console.log(textStatus);
+                }
+            });
         });
     });
 

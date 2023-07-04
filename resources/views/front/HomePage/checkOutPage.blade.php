@@ -155,22 +155,19 @@
         $(document).ready(function() {
 
             var count = {!! count($data) !!};
-            console.log(count);
 
-            var form = document.getElementById('addressForm');
             if (count > 0) {
-                form.style.display = 'none';
+                $('#addressForm').css('display','none');
             } else {
-                form.style.display = 'block';
+                $('#addressForm').css('display','block');
             }
 
             $('.addAddress').on("click",function() {
-                console.log("here");
-                form.style.display = 'block';
+                $('#addressForm').css('display','block');
             });
 
             $('.editAddress').on("click",function(){
-                form.style.display = 'block';
+                $('#addressForm').css('display','block');
                 var addressId = $(this).attr('data-address-id');
                 var routeUrl = "/check-out-edit/" + addressId;
 
@@ -182,7 +179,7 @@
                         _token: $('meta[name="csrf-token"]').attr('content')
                     },
                     success: function(response) {
-                        $('.addressForm').css('display','block');
+                        $('#addressForm').css('display','block');
                         var addressData = response.addressData;
                         if (addressData) {
                             $('#updateAddress').val(addressData.address_id);

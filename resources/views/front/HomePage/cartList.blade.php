@@ -56,18 +56,22 @@
             </div>
         </div>
     @endforeach
-    <div class="row pt-5">
-        <div class="col-md-3 border">
-            <div class="d-flex flex-column bd-highlight mb-3">
-                <div class="p-2 bd-highlight">
-                    Total Amount : {{ $totalAmount }}
-                </div>
-                <div class="p-2 bd-highlight">
-                    <a class="btn btn-warning px-5" href="{{ route('view-checkOut') }}"> Check Out </a>
+    @if ($cartLists->isNotEmpty())
+        <div class="row pt-5">
+            <div class="col-md-3 border">
+                <div class="d-flex flex-column bd-highlight mb-3">
+                    <div class="p-2 bd-highlight">
+                        Total Amount : {{ $totalAmount }}
+                    </div>
+                    <div class="p-2 bd-highlight">
+                        <a class="btn btn-warning px-5" href="{{ route('view-checkOut') }}"> Check Out </a>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    @else
+        <div>Your Cart is empty !!</div>
+    @endif
 </div>
 @endsection
 

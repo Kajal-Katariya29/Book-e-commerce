@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use App\Models\Address;
 use App\Models\CartList;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Order;
+use App\Models\OrderItem;
+use Illuminate\Support\Carbon;
 
 class PlaceOrderController extends Controller
 {
@@ -15,5 +18,32 @@ class PlaceOrderController extends Controller
         $addresses = Address::where('user_id',Auth::user()->user_id)->get();
         $cartlists = CartList::with('books','variants')->where('user_id',Auth::user()->user_id)->get();
         return view('front.HomePage.placeOrder',compact('addressdata','addresses','cartlists'));
+    }
+
+    public function store(Request $request){
+        $order = Order::create([
+            'user_id' => Auth::user()->user_id,
+            'shipping_address_id' => $request->shippping_address_id,
+            'billing_address_id' => $request->billing_address_id == null ? $request->shippping_address_id : $request->billing_address_id,
+            'payment_type' => $request->payment_type,
+            'payment_status' => "SUCCESS",
+            'total_amount' => $request->total_amount,
+            'order_date' => Carbon::now()
+        ]);
+
+        $orderItem = $request->cartLists;
+
+        foreach($orderItem as $item){
+            $order_item = new OrderItem();
+            $order_item->book_id = $item['product_name'];
+            $order_item->quantity = $item['quantity'];
+            $order_item->variant_type_id = $item['variant'];
+            $order_item->price = $item['price'];
+            $order_item->order_id = $order->order_id;
+            $order_item->discount = '0';
+            $order_item->save();
+        }
+
+        return response()->json(["success" => true]);
     }
 }
