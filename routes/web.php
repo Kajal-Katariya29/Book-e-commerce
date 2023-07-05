@@ -14,6 +14,7 @@ use App\Http\Controllers\front\CheckOutPageController;
 use App\Http\Controllers\front\HomePageController;
 use App\Http\Controllers\front\OrderListController;
 use App\Http\Controllers\front\PlaceOrderController;
+use App\Http\Controllers\front\PaymentController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -71,6 +72,11 @@ Route::middleware([UserMiddleware::class])->group(function () {
     //routes for Order Listing page
     Route::get('/order-list',[OrderListController::class,'orders'])->name('order.view');
     Route::get('/order-detail/{id}',[OrderListController::class,'orderDetail'])->name('order.detail');
+
+    //routes for payment gateway
+    Route::post('/payment/{id}',[PaymentController::class,'payment'])->name('payment.view');
+    Route::get('/payment-success',[PaymentController::class,'success'])->name('payment.success');
+    Route::get('/payment-cancel',[PaymentController::class,'cancel'])->name('payment.cancel');
 
 });
 

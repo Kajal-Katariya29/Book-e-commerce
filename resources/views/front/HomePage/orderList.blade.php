@@ -23,11 +23,18 @@
                             <div class="p-2 bd-highlight">
                                <a class="btn btn-warning w-25" href="{{ route('order.detail',$order->order_id) }}" > View Details </a>
                             </div>
+                            <form action="{{ route('payment.view',$order->order_id) }}" class="p-2" method="post">
+                                @csrf
+                                <button type="submit" class="btn btn-warning w-25"> Pay </button>
+                            </form>
                         </div>
                     @endforeach
                 </div>
             </div>
+            <div>
+            </div>
         </div>
+
     </div>
 @endsection
 

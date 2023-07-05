@@ -15,12 +15,10 @@ return new class extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->bigIncrements('payment_id');
-            $table->unsignedBigInteger('order_id');
-            $table->foreign('order_id')->references('order_id')->on('orders')->onDelete('cascade');
-            $table->enum('payment_type',['COD','ONLINE']);
-            $table->decimal('total_amount',10,3);
-            $table->timestamp('payment_time');
-            $table->enum('status',['SUCCESS','FAILED']);
+            $table->integer('session_id');
+            $table->text('request')->nullable();
+            $table->text('response')->nullable();
+            $table->enum('status',['pending','success','failed'])->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

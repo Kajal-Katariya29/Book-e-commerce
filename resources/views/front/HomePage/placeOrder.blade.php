@@ -101,21 +101,26 @@
         <div class="row pt-3">
             <h4> Payment Method </h4>
             <div class="form-check">
-                <input class="form-check-input" type="radio" name="paymentType" id="cod" value="COD">
+                <input class="form-check-input" type="radio" name="paymnetType" id="stripe" value="stripe" name="stripe">
                 <label class="form-check-label" for="cod">
-                     COD
+                     Stripe
                 </label>
             </div>
             <div class="form-check">
-                <input class="form-check-input" type="radio" name="defaultSelected" id="online" value="Online">
-                <label class="form-check-label" for="online">
-                    Online
+                <input class="form-check-input" type="radio" name="paymnetType" checked="checked" id="cod" value="cod" name="cod">
+                <label class="form-check-label" for="Stripe">
+                    COD
                 </label>
             </div>
         </div>
-        <div class="pt-3">
+        <div class="pt-3" class="checkout">
             <button class="btn btn-warning w-25 placeOrder">
-                Place Order
+                Check Out
+            </button>
+        </div>
+        <div class="pt-3" class="checkout">
+            <button class="btn btn-warning w-25 placeOrder">
+                Check In
             </button>
         </div>
     </div>
@@ -126,7 +131,15 @@
 <script>
    $(document).ready(function() {
 
-    $(".addressContainer").hide();
+    $(document).ready(function() {
+        $("div.desc").hide();
+                $("input[name$='cars']").click(function() {
+                var test = $(this).val();
+
+                $("div.desc").hide();
+                $("#Cars" + test).show();
+            });
+        });
 
         $("#differentAddress").change(function() {
             if ($(this).is(":checked")) {
