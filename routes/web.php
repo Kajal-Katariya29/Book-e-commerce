@@ -74,7 +74,6 @@ Route::middleware([UserMiddleware::class])->group(function () {
     Route::get('/order-detail/{id}',[OrderListController::class,'orderDetail'])->name('order.detail');
 
     //routes for payment gateway
-    Route::post('/payment/{id}',[PaymentController::class,'payment'])->name('payment.view');
     Route::get('/payment-success',[PaymentController::class,'success'])->name('payment.success');
     Route::get('/payment-cancel',[PaymentController::class,'cancel'])->name('payment.cancel');
 

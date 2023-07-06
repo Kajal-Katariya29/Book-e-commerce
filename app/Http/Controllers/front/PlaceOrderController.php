@@ -9,6 +9,7 @@ use App\Models\CartList;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Services\Payment\Stripe\StripePayment;
 use Illuminate\Support\Carbon;
 
 class PlaceOrderController extends Controller
@@ -26,7 +27,7 @@ class PlaceOrderController extends Controller
             'shipping_address_id' => $request->shippping_address_id,
             'billing_address_id' => $request->billing_address_id == null ? $request->shippping_address_id : $request->billing_address_id,
             'payment_type' => $request->payment_type,
-            'payment_status' => "SUCCESS",
+            'payment_status' => $request->payment_type == 'stripe' ? 'PENDING' : 'SUCCESS',
             'total_amount' => $request->total_amount,
             'order_date' => Carbon::now()
         ]);
@@ -44,6 +45,11 @@ class PlaceOrderController extends Controller
             $order_item->save();
         }
 
-        return response()->json(["success" => true]);
+        $data['url'] = "/order-list";
+        if($request->payment_type == 'stripe'){
+            $payment = new StripePayment();
+            $data['redirectUrl'] = $payment->payment($order);
+        }
+        return response()->json($data);
     }
 }

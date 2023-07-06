@@ -101,26 +101,21 @@
         <div class="row pt-3">
             <h4> Payment Method </h4>
             <div class="form-check">
-                <input class="form-check-input" type="radio" name="paymnetType" id="stripe" value="stripe" name="stripe">
+                <input class="form-check-input" type="radio" name="paymentType" id="stripe" value="stripe">
                 <label class="form-check-label" for="cod">
                      Stripe
                 </label>
             </div>
             <div class="form-check">
-                <input class="form-check-input" type="radio" name="paymnetType" checked="checked" id="cod" value="cod" name="cod">
+                <input class="form-check-input" type="radio" name="paymentType" id="cod" value="cod">
                 <label class="form-check-label" for="Stripe">
                     COD
                 </label>
             </div>
         </div>
-        <div class="pt-3" class="checkout">
+        <div class="pt-3">
             <button class="btn btn-warning w-25 placeOrder">
                 Check Out
-            </button>
-        </div>
-        <div class="pt-3" class="checkout">
-            <button class="btn btn-warning w-25 placeOrder">
-                Check In
             </button>
         </div>
     </div>
@@ -131,15 +126,7 @@
 <script>
    $(document).ready(function() {
 
-    $(document).ready(function() {
-        $("div.desc").hide();
-                $("input[name$='cars']").click(function() {
-                var test = $(this).val();
-
-                $("div.desc").hide();
-                $("#Cars" + test).show();
-            });
-        });
+        $(".addressContainer").hide();
 
         $("#differentAddress").change(function() {
             if ($(this).is(":checked")) {
@@ -148,6 +135,7 @@
             $(".addressContainer").hide();
             }
         });
+
 
         $('.placeOrder').on("click",function(){
             var shippping_address_id = $('.addressId').val();
@@ -183,7 +171,12 @@
                     _token: $('meta[name="csrf-token"]').attr('content')
                 },
                 success: function(response) {
-                        window.location.href = "/order-list";
+                    if(response.redirectUrl){
+                        window.location.href = response.redirectUrl;
+                    }
+                    else{
+                        window.location.href = response.url;
+                    }
                 },
                 error: function(xhr, textStatus, errorThrown) {
                     console.log(textStatus);
