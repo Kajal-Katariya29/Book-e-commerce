@@ -10,11 +10,11 @@
     <div class="row m-5">
         <div class="d-flex bd-highlight">
             <div class="me-auto p-2 bd-highlight fs-2">Book-e-Sale</div>
-            @can('book.create')
+            {{-- @can('book.create') --}}
                 <div class="p-2 bd-highlight">
                     <a href="{{ route('books.create') }}" class="btn btn-success"> ADD Books </a>
                 </div>
-            @endcan
+            {{-- @endcan --}}
         </div>
     </div>
 </div>

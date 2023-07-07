@@ -12,6 +12,7 @@ use App\Models\VariantMapping;
 use App\Models\CategoryList;
 use App\Models\CategoryMapping;
 use App\Policies\BookPolicy;
+use DB;
 
 use App\Http\Requests\BookListRequest;
 
@@ -34,7 +35,7 @@ class BookListController extends Controller
      */
     public function index()
     {
-        $this->authorize('book.view');
+        // $this->authorize('book.view');
 
         $bookDetails = BookList::orderby('book_id','desc')->get();
         return view('admin.BookList.index',compact('bookDetails'));
@@ -47,7 +48,7 @@ class BookListController extends Controller
      */
     public function create()
     {
-        $this->authorize('book.create');
+        // $this->authorize('book.create');
 
         $bookData = BookList::with('variants','bookMedia','categories')->first();
 
@@ -86,7 +87,9 @@ class BookListController extends Controller
         $variantIds = $data['variant_id'];
         $variantTypeNames = $data['variant_type_name'];
         foreach ($variantIds as $key => $variantId) {
+
             $variantTypeName = $variantTypeNames[$key];
+
             if ($variantId !== null) {
                 $variantMapping = new VariantMapping();
                 $variantMapping->variant_id = $variantId;
@@ -96,7 +99,6 @@ class BookListController extends Controller
                 $variantMapping->save();
             }
         }
-
         if($request->subCategory_name){
             CategoryMapping::create([
                 'book_id' => $bookList->book_id,

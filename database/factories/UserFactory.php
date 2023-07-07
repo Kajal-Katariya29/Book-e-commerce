@@ -20,11 +20,11 @@ class UserFactory extends Factory
         return [
             'first_name' => $this->faker->name(),
             'last_name' => $this->faker->name(),
-            'role' => 'admin',
+            'role' => $this->faker->randomElement(['admin']),
             'phone_number' => $this->faker->text(10),
             'address' => $this->faker->name(),
             'email' => $this->faker->unique()->safeEmail(),
-            'password' => '1234', // password
+            'password' => bcrypt(12345678), // password
         ];
     }
 

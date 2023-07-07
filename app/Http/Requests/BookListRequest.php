@@ -31,7 +31,7 @@ class BookListRequest extends FormRequest
             // 'images' => 'image|required|mimes:jpeg,png,gif,jpg|max:2048',
             // 'variant_id' => 'required',
             // 'variant_type_name' => 'required',
-            'category_name' => 'required'
+            // 'category_name' => 'required'
         ];
     }
 

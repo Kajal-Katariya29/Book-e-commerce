@@ -6,11 +6,13 @@ use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+
 use Tests\TestCase;
+use App\Models\User;
 
 class RegistrationTest extends TestCase
 {
-    // use DatabaseMigrations;
+    use WithFaker;
     /**
      * A basic feature test example.
      *
@@ -26,16 +28,29 @@ class RegistrationTest extends TestCase
     public function test_new_users_can_register()
     {
         $response = $this->post('/register',[
-            'firstname' => 'Test',
-            'lastname' => 'User',
-            'email' => 'Test123@gmail.com',
+            'firstname' => $this->faker->name(),
+            'lastname' => $this->faker->name(),
+            'email' => $this->faker->unique()->safeEmail(),
             'password' => '12345678',
-            'password_confirmation' => '12345678',
-            'phone_number' => '1236547897',
-            'address' => '789 Satellite'
+            'password_confirmation' =>'12345678',
+            'phone_number' => $this->faker->text(10),
+            'address' => $this->faker->name(),
         ]);
-
         $this->assertAuthenticated();
         $response->assertRedirect(RouteServiceProvider::HOME);
+    }
+
+    public function test_user_can_not_register_with_invalid_password(){
+        $response = $this->post('/register',[
+            'firstname' => $this->faker->name(),
+            'lastname' => $this->faker->name(),
+            'email' => $this->faker->unique()->safeEmail(),
+            'password' => '12345678',
+            'password_confirmation' => '1234',
+            'phone_number' => $this->faker->text(10),
+            'address' => $this->faker->name(),
+        ]);
+
+        $this->assertGuest();
     }
 }
