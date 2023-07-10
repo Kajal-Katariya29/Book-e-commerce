@@ -50,7 +50,7 @@
 
         $('.deleteImage').on('click',function(){
         var ImageId = $(this).data('image-id');
-        var routeUrl = "/delete-image/" + ImageId;
+        var routeUrl = "/admin/delete-image/" + ImageId;
         console.log(routeUrl);
 
             $.ajax({
@@ -91,7 +91,7 @@
 
         function fetchCategories(categoryId){
             $.ajax({
-                url: "/fetch-category",
+                url: "/admin/fetch-category",
                 type: "POST",
                 data: {
                     categoryId: categoryId,

@@ -36,7 +36,6 @@ class BookListController extends Controller
     public function index()
     {
         // $this->authorize('book.view');
-
         $bookDetails = BookList::orderby('book_id','desc')->get();
         return view('admin.BookList.index',compact('bookDetails'));
     }
@@ -144,6 +143,7 @@ class BookListController extends Controller
         // $this->authorize('book.book_edit');
 
         $bookData = BookList::where('book_id',$id)->with('variants','bookMedia','categories')->first();
+        // dd($bookData);
         $categoryData = CategoryList::where('cateogery_id',$bookData->categories->pluck('cateogery_id'))->with('subCategory')->get();
 
         $catData = [];
@@ -155,13 +155,13 @@ class BookListController extends Controller
             }
         }
 
-
         foreach ($categoryData as $category) {
             $subcategories = $category->subCategory;
             foreach ($subcategories as $subcategory) {
                 $subData[] = $subcategory->cateogery_id;
             }
         }
+
 
         $subCatData = CategoryList::where('category_parent_id',$catData)->select('cateogery_id','category_name')->get()->pluck('category_name','cateogery_id');
         $subCategory = CategoryList::where('category_parent_id',$subData)->select('cateogery_id','category_name')->get()->pluck('category_name','cateogery_id');
@@ -207,8 +207,8 @@ class BookListController extends Controller
         foreach ($variantIds as $key => $variantId) {
             $variantTypeName = $variantTypeNames[$key];
             if ($variantId !== null) {
-            $variant_mapping_id = $data['variant_mapping_id'][$key];
-            $variantMapping = VariantMapping::where('variant_mapping_id', $variant_mapping_id)->first();
+                $variant_mapping_id = $data['variant_mapping_id'][$key];
+                $variantMapping = VariantMapping::where('variant_mapping_id', $variant_mapping_id)->first();
 
                 if (!$variantMapping) {
                     $variantMapping = new VariantMapping();
@@ -233,7 +233,6 @@ class BookListController extends Controller
                 'cateogery_id' => $request->category_name
             ]);
         }
-
         if(empty($bookData)){
             return redirect()->route('books.index')->with('error','The Data is not available !!');
         }
@@ -250,9 +249,9 @@ class BookListController extends Controller
     public function destroy($id)
     {
         // $this->authorize('book.book_delete');
-
         $bookData = BookList::where('book_id',$id)->delete();
         $categoryData = CategoryMapping::where('book_id',$id)->delete();
+        $variantData = VariantMapping::where('book_id',$id)->delete();
 
         if(empty($bookData)){
             return redirect()->route('books.index')->with('error','The Data is not available !!');
