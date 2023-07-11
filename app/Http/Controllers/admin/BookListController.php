@@ -18,14 +18,27 @@ use App\Http\Requests\BookListRequest;
 
 class BookListController extends Controller
 {
+    protected $bookList;
+    protected $variant;
+    protected $varianttype;
+    protected $categorylist;
+    protected $bookmedia;
+    protected $categorymapping;
+
      /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(BookList $bookList, Variant $variant, VariantType $varianttype,CategoryList $categorylist, BookMedia $bookmedia, CategoryMapping $categorymapping)
     {
         $this->middleware('auth');
+        $this->bookList = $bookList;
+        $this->variant = $variant;
+        $this->varianttype = $varianttype;
+        $this->categorylist = $categorylist;
+        $this->bookmedia = $bookmedia;
+        $this->categorymapping = $categorymapping;
     }
 
     /**
@@ -47,15 +60,16 @@ class BookListController extends Controller
      */
     public function create()
     {
+
         // $this->authorize('book.create');
 
-        $bookData = BookList::with('variants','bookMedia','categories')->first();
+        $bookData = $this->bookList->first();
 
-        $variant_type = Variant::select('variant_id','variant_type')->get()->pluck('variant_type','variant_id');
+        $variant_type =  $this->variant->all()->pluck('variant_type','variant_id');
 
-        $variant_type_name = VariantType::select('variant_type_id', 'variant_type_name')->get()->pluck('variant_type_name', 'variant_type_id');
+        $variant_type_name = $this->varianttype->all()->pluck('variant_type_name', 'variant_type_id');
 
-        $category_name = CategoryList::select('cateogery_id','category_name')->where('category_parent_id','0')->get()->pluck('category_name','cateogery_id');
+        $category_name =  $this->categorylist->all()->where('category_parent_id','0')->pluck('category_name','cateogery_id');
 
         return view('admin.BookList.create',compact('variant_type','variant_type_name','category_name','bookData'));
     }
@@ -68,15 +82,19 @@ class BookListController extends Controller
      */
     public function store(BookListRequest $request)
     {
-        // dd($request->all());
-        $bookList = BookList::create($request->only(['name','description','author','price']));
+        $bookdata = $this->bookList->create([
+            'name' => $request->name,
+            'description' =>$request->description,
+            'author' =>$request->author,
+            'price' =>$request->price,
+        ]);
 
         if ($images = $request->file('images')) {
             foreach ($images as $image) {
                 $filename = $image->getClientOriginalName();
-                $image->move(public_path('images/Book-Images/' . $bookList->book_id . "/"), $filename);
-                BookMedia::create([
-                    'book_id' => $bookList->book_id,
+                $image->move(public_path('images/Book-Images/' . $bookdata->book_id . "/"), $filename);
+                $this->bookmedia->create([
+                    'book_id' => $bookdata->book_id,
                     'media_name' => $filename
                 ]);
             }
@@ -92,21 +110,22 @@ class BookListController extends Controller
             if ($variantId !== null) {
                 $variantMapping = new VariantMapping();
                 $variantMapping->variant_id = $variantId;
-                $variantMapping->book_id = $bookList->book_id;
+                $variantMapping->book_id = $bookdata->book_id;
                 $variantMapping->variant_type_id = $variantTypeName;
                 $variantMapping->book_price = $data['book_price'][$key];
                 $variantMapping->save();
             }
         }
+
         if($request->subCategory_name){
-            CategoryMapping::create([
-                'book_id' => $bookList->book_id,
+            $this->categorymapping->create([
+                'book_id' => $bookdata->book_id,
                 'cateogery_id' => $request->subCategory_name
             ]);
         }
         else{
-            CategoryMapping::create([
-                'book_id' => $bookList->book_id,
+            $this->categorymapping->create([
+                'book_id' => $bookdata->book_id,
                 'cateogery_id' => $request->category_name
             ]);
         }
