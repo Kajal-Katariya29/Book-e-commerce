@@ -59,7 +59,7 @@
 
         function fetchCategories(categoryId){
             $.ajax({
-                url: "/admin/fetch-category",
+                url: "/admin/   fetch-category",
                 type: "POST",
                 data: {
                     categoryId: categoryId,

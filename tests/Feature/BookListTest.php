@@ -22,11 +22,6 @@ class BookListTest extends TestCase
      *
      * @return void
      */
-    // public function test_the_application_returns_a_successful_response()
-    // {
-    //     $response = $this->get('/admin/books');
-    //     $response->assertStatus(200);
-    // }
 
     public function test_only_admin_can_store_new_book()
     {

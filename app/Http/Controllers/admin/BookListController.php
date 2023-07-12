@@ -13,6 +13,7 @@ use App\Models\CategoryList;
 use App\Models\CategoryMapping;
 use App\Policies\BookPolicy;
 use DB;
+use Illuminate\Support\Facades\Storage;
 
 use App\Http\Requests\BookListRequest;
 
@@ -24,13 +25,14 @@ class BookListController extends Controller
     protected $categorylist;
     protected $bookmedia;
     protected $categorymapping;
+    protected $variantmapping;
 
      /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct(BookList $bookList, Variant $variant, VariantType $varianttype,CategoryList $categorylist, BookMedia $bookmedia, CategoryMapping $categorymapping)
+    public function __construct(BookList $bookList, Variant $variant, VariantType $varianttype, CategoryList $categorylist, BookMedia $bookmedia, CategoryMapping $categorymapping, VariantMapping $variantmapping)
     {
         $this->middleware('auth');
         $this->bookList = $bookList;
@@ -39,6 +41,7 @@ class BookListController extends Controller
         $this->categorylist = $categorylist;
         $this->bookmedia = $bookmedia;
         $this->categorymapping = $categorymapping;
+        $this->variantmapping = $variantmapping;
     }
 
     /**
@@ -82,6 +85,7 @@ class BookListController extends Controller
      */
     public function store(BookListRequest $request)
     {
+
         $bookdata = $this->bookList->create([
             'name' => $request->name,
             'description' =>$request->description,
@@ -94,11 +98,12 @@ class BookListController extends Controller
                 $filename = $image->getClientOriginalName();
                 $image->move(public_path('images/Book-Images/' . $bookdata->book_id . "/"), $filename);
                 $this->bookmedia->create([
-                    'book_id' => $bookdata->book_id,
+                    'book_id' => $bookdata->toArray()['book_id'],
                     'media_name' => $filename
                 ]);
             }
         }
+
 
         $data = $request->all();
         $variantIds = $data['variant_id'];
@@ -108,9 +113,9 @@ class BookListController extends Controller
             $variantTypeName = $variantTypeNames[$key];
 
             if ($variantId !== null) {
-                $variantMapping = new VariantMapping();
+                $variantMapping = $this->variantmapping;
                 $variantMapping->variant_id = $variantId;
-                $variantMapping->book_id = $bookdata->book_id;
+                $variantMapping->book_id = $bookdata->toArray()['book_id'];
                 $variantMapping->variant_type_id = $variantTypeName;
                 $variantMapping->book_price = $data['book_price'][$key];
                 $variantMapping->save();
@@ -119,13 +124,13 @@ class BookListController extends Controller
 
         if($request->subCategory_name){
             $this->categorymapping->create([
-                'book_id' => $bookdata->book_id,
+                'book_id' => $bookdata->toArray()['book_id'],
                 'cateogery_id' => $request->subCategory_name
             ]);
         }
         else{
             $this->categorymapping->create([
-                'book_id' => $bookdata->book_id,
+                'book_id' => $bookdata->toArray()['book_id'],
                 'cateogery_id' => $request->category_name
             ]);
         }
@@ -160,9 +165,7 @@ class BookListController extends Controller
     public function edit($id)
     {
         // $this->authorize('book.book_edit');
-
-        $bookData = BookList::where('book_id',$id)->with('variants','bookMedia','categories')->first();
-        // dd($bookData);
+        $bookData = $this->bookList->where('book_id',$id)->with('variants','bookMedia','categories')->first();
         $categoryData = CategoryList::where('cateogery_id',$bookData->categories->pluck('cateogery_id'))->with('subCategory')->get();
 
         $catData = [];
@@ -180,7 +183,6 @@ class BookListController extends Controller
                 $subData[] = $subcategory->cateogery_id;
             }
         }
-
 
         $subCatData = CategoryList::where('category_parent_id',$catData)->select('cateogery_id','category_name')->get()->pluck('category_name','cateogery_id');
         $subCategory = CategoryList::where('category_parent_id',$subData)->select('cateogery_id','category_name')->get()->pluck('category_name','cateogery_id');
@@ -201,53 +203,60 @@ class BookListController extends Controller
      */
     public function update(BookListRequest $request, $id)
     {
-        $bookData = BookList::where('book_id',$id)->update($request->only(['name','description','author','price']));
+        $bookData = $this->bookList->where('book_id',$id)->update($request->only(['name','description','author','price']));
 
-        if ($images = $request->file('images')) {
-            foreach ($images as $image) {
-                $filename = $image->getClientOriginalName();
-                $image->move(public_path('images/Book-Images/' . $id . "/"), $filename);
-                BookMedia::create([
-                    'book_id' => $id,
-                    'media_name' => $filename
-                ]);
-            }
-        }
+        // if ($images = $request->file('images')) {
+        //     foreach ($images as $image) {
+        //         $filename = $image->getClientOriginalName();
+        //         $image->move(public_path('images/Book-Images/' . $id . "/"), $filename);
+        //         BookMedia::create([
+        //             'book_id' => $id,
+        //             'media_name' => $filename
+        //         ]);
+        //     }
+        // }
 
         $data = $request->all();
         $removed_variant_mapping_id = explode(",",$data['removed_variant_mapping_id']);
+
         if(count($removed_variant_mapping_id)>0)
         {
-            VariantMapping::whereIn('variant_mapping_id',$removed_variant_mapping_id)->delete();
+            $this->variantmapping->whereIn('variant_mapping_id',$removed_variant_mapping_id)->delete();
         }
+
         $variantIds = $data['variant_id'];
         $variantTypeNames = $data['variant_type_name'];
 
         foreach ($variantIds as $key => $variantId) {
             $variantTypeName = $variantTypeNames[$key];
             if ($variantId !== null) {
+
                 $variant_mapping_id = $data['variant_mapping_id'][$key];
-                $variantMapping = VariantMapping::where('variant_mapping_id', $variant_mapping_id)->first();
+
+                $variantMapping = $this->variantmapping->where('variant_mapping_id', $variant_mapping_id)->first();
 
                 if (!$variantMapping) {
-                    $variantMapping = new VariantMapping();
+                    $variantMapping = $this->variantmapping;
                 }
+                else{
+                    $variantMapping = $this->variantmapping;
                     $variantMapping->variant_id = $variantId;
                     $variantMapping->book_id = $id;
                     $variantMapping->variant_type_id = $variantTypeName;
                     $variantMapping->book_price = $data['book_price'][$key];
                     $variantMapping->save();
+                }
             }
         }
 
         if($request->subCategory_name){
-            CategoryMapping::where('book_id',$id)->update([
+            $this->categorymapping->create('book_id',$id)->update([
                 'book_id' => $id,
                 'cateogery_id' => $request->subCategory_name
             ]);
         }
         else{
-            CategoryMapping::where('book_id',$id)->update([
+            $this->categorymapping->create('book_id',$id)->update([
                 'book_id' => $id,
                 'cateogery_id' => $request->category_name
             ]);
@@ -268,9 +277,9 @@ class BookListController extends Controller
     public function destroy($id)
     {
         // $this->authorize('book.book_delete');
-        $bookData = BookList::where('book_id',$id)->delete();
-        $categoryData = CategoryMapping::where('book_id',$id)->delete();
-        $variantData = VariantMapping::where('book_id',$id)->delete();
+        $bookData =  $this->bookList->where('book_id',$id)->delete();
+        $categoryData = $this->categorymapping->where('book_id',$id)->delete();
+        $variantData = $this->variantmapping->where('book_id',$id)->delete();
 
         if(empty($bookData)){
             return redirect()->route('books.index')->with('error','The Data is not available !!');
