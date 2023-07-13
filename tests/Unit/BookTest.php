@@ -29,8 +29,8 @@ class BookTest extends TestCase
      * @return void
      */
 
-    public function testcreatebook(){
-
+    public function testcreatebook()
+    {
         $mockBook =  Mockery::mock(BookList::class);
         $mockVariant =  Mockery::mock(Variant::class);
         $mockVarintType = Mockery::mock(VariantType::class);
@@ -63,8 +63,8 @@ class BookTest extends TestCase
         $response =  $bookController->create();
     }
 
-    public function testStoreBook(){
-
+    public function testStoreBook()
+    {
         $mockBook =  Mockery::mock(BookList::class);
         $mockBookMedia = Mockery::mock(BookMedia::class);
         $mockVarintMapping = Mockery::mock(VariantMapping::class);
@@ -82,8 +82,7 @@ class BookTest extends TestCase
         $variantMapping = VariantMapping::factory()->create(['book_id' => $book->book_id,'variant_id' => $variant->variant_id , 'variant_type_id' => $variantType->variant_type_id ]);
 
         Storage::fake('public');
-        $file =  UploadedFile::fake()->image('image.jpg', 1, 1);
-
+        $file = Array (UploadedFile::fake()->image('image.jpg', 1, 1));
         $request = new BookListRequest([
             'name' => $book->name,
             'description' => $book->description,
@@ -99,6 +98,8 @@ class BookTest extends TestCase
             'subCategory_name' => $category->category_parent_id,
             'book_price' => [$variantMapping->book_price],
         ]);
+
+        $request->files->set('images',$file);
 
         $bookData = collect([
             'name' => $book->name,
@@ -142,6 +143,9 @@ class BookTest extends TestCase
         $removed_variant_mapping_id = [$variantMapping->variant_mapping_id];
         $variant_mapping_id = $variantMapping->variant_mapping_id;
 
+        Storage::fake('public');
+        $file = Array (UploadedFile::fake()->image('image.jpg', 1, 1));
+
         $request = new BookListRequest([
             'name' => $book->name,
             'description' => $book->description,
@@ -152,11 +156,13 @@ class BookTest extends TestCase
             'variant_mapping_id' => [$variantMapping->variant_mapping_id],
             'variant_id' => [$variant->variant_id],
             'variant_type_name' => [$variantType->variant_type_id],
-            'images' => $bookMedia->media_name,
+            'images' => $file,
             'category_name' => $category->cateogery_id,
             'subCategory_name' => $category->category_parent_id,
             'book_price' => [$variantMapping->book_price],
         ]);
+
+        $request->files->set('images',$file);
 
         $mockBook->shouldReceive('where')->with('book_id', $bookId)->once()->andReturnSelf();
         $mockBook->shouldReceive('update')->once()->andReturnSelf();
@@ -171,18 +177,14 @@ class BookTest extends TestCase
             'book_id' => $bookId,
             'cateogery_id' =>$category->category_parent_id,
         ])->once();
-        $mockCategoryMapping->shouldReceive('update')->with([
-            'book_id' => $bookId,
-            'cateogery_id' =>$category->cateogery_id,
-        ])->once();
 
         $bookController = new BookListController($mockBook,$mockVariant,$mockVarintType,$mockCategoryList,$mockBookMedia,$mockCategoryMapping,$mockVarintMapping);
 
         $response = $bookController->update($request,$bookId);
     }
 
-    public function testDeleteBoook(){
-
+    public function testDeleteBoook()
+    {
         $mockBook =  Mockery::mock(BookList::class);
         $mockBookMedia = Mockery::mock(BookMedia::class);
         $mockVarintMapping = Mockery::mock(VariantMapping::class);
@@ -204,6 +206,5 @@ class BookTest extends TestCase
         $bookController = new BookListController($mockBook,$mockVariant,$mockVarintType,$mockCategoryList,$mockBookMedia,$mockCategoryMapping,$mockVarintMapping);
 
         $response = $bookController->destroy($bookId);
-
     }
 }

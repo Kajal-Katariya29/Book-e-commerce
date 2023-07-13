@@ -14,7 +14,6 @@ use App\Models\CategoryMapping;
 use App\Policies\BookPolicy;
 use DB;
 use Illuminate\Support\Facades\Storage;
-
 use App\Http\Requests\BookListRequest;
 
 class BookListController extends Controller
@@ -63,7 +62,6 @@ class BookListController extends Controller
      */
     public function create()
     {
-
         // $this->authorize('book.create');
 
         $bookData = $this->bookList->first();
@@ -85,7 +83,6 @@ class BookListController extends Controller
      */
     public function store(BookListRequest $request)
     {
-
         $bookdata = $this->bookList->create([
             'name' => $request->name,
             'description' =>$request->description,
@@ -96,14 +93,13 @@ class BookListController extends Controller
         if ($images = $request->file('images')) {
             foreach ($images as $image) {
                 $filename = $image->getClientOriginalName();
-                $image->move(public_path('images/Book-Images/' . $bookdata->book_id . "/"), $filename);
+                $image->move(public_path('images/Book-Images/' . $bookdata->toArray()['book_id'] . "/"), $filename);
                 $this->bookmedia->create([
                     'book_id' => $bookdata->toArray()['book_id'],
                     'media_name' => $filename
                 ]);
             }
         }
-
 
         $data = $request->all();
         $variantIds = $data['variant_id'];
@@ -205,16 +201,16 @@ class BookListController extends Controller
     {
         $bookData = $this->bookList->where('book_id',$id)->update($request->only(['name','description','author','price']));
 
-        // if ($images = $request->file('images')) {
-        //     foreach ($images as $image) {
-        //         $filename = $image->getClientOriginalName();
-        //         $image->move(public_path('images/Book-Images/' . $id . "/"), $filename);
-        //         BookMedia::create([
-        //             'book_id' => $id,
-        //             'media_name' => $filename
-        //         ]);
-        //     }
-        // }
+        if ($images = $request->file('images')) {
+            foreach ($images as $image) {
+                $filename = $image->getClientOriginalName();
+                $image->move(public_path('images/Book-Images/' . $id . "/"), $filename);
+                BookMedia::create([
+                    'book_id' => $id,
+                    'media_name' => $filename
+                ]);
+            }
+        }
 
         $data = $request->all();
         $removed_variant_mapping_id = explode(",",$data['removed_variant_mapping_id']);

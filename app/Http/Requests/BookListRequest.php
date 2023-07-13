@@ -42,7 +42,7 @@ class BookListRequest extends FormRequest
             'description.required' => 'The  description feild is required !!',
             'author.required' => 'The  author name is must required !!',
             'price.required' => 'The  price feild is required !!',
-            'images.required' => 'This feild is required !!',
+            // 'images.required' => 'This feild is required !!',
             // 'variant_id.required' => 'Please select variant name !!',
             // 'variant_type_name.required' => 'Please select variant type name !!',
             'category_name.required' => 'Please Select this feild !!'
