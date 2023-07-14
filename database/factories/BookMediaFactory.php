@@ -18,6 +18,7 @@ class BookMediaFactory extends Factory
     public function definition()
     {
         return [
+            'book_id' => BookList::factory()->create()->book_id,
             'media_name' => $this->faker->name(),
         ];
     }

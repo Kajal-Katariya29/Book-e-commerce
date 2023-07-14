@@ -39,9 +39,8 @@
             <td>{{ $variant->variant_id }}</td>
             <td>{{ $variant->variant_type }}</td>
             <td>
-                <a class="btn btn-info" href="{{ route('variants.edit',$variant->variant_id) }}">Edit</a>
-                {!! Form::open(['route' => ['variants.destroy',$variant->variant_id], 'method' => 'DELETE']) !!}
-                {!! Form::token() !!}
+                <a class="btn btn-info" href="{{ route('variants.edit',$variant->variant_id) }}" id="edit{{ $variant->variant_id }}">Edit</a>
+                {!! Form::open(['route' => ['variants.destroy',$variant->variant_id], 'method' => 'DELETE', 'id' => "delete{$variant->variant_id}"]) !!}
                     {!! Form::submit('Delete',['class'=> 'btn btn-danger']) !!}
                 {!! Form::close() !!}
             </td>

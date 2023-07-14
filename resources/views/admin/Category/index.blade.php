@@ -39,7 +39,7 @@
             <td>{{ $categoryDetail->cateogery_id }}</td>
             <td>{{ $categoryDetail->category_name }}</td>
             <td>
-                <a class="btn btn-info" href="{{ route('categories.edit',$categoryDetail->cateogery_id) }}">Edit</a>
+                <a class="btn btn-info" href="{{ route('categories.edit',$categoryDetail->cateogery_id) }}" id="edit{{ $categoryDetail->cateogery_id }}">Edit</a>
                 {!! Form::open(['route' => ['categories.destroy',$categoryDetail->cateogery_id], 'method' => 'DELETE']) !!}
                 {!! Form::token() !!}
                     {!! Form::submit('Delete',['class'=> 'btn btn-danger']) !!}

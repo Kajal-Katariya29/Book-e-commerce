@@ -39,7 +39,7 @@
             <td>{{ $variantTypeName->variant_type_id }}</td>
             <td>{{ $variantTypeName->variant_type_name }}</td>
             <td>
-                <a class="btn btn-info" href="{{ route('variant-type.edit',$variantTypeName->variant_type_id) }}">Edit</a>
+                <a class="btn btn-info" href="{{ route('variant-type.edit',$variantTypeName->variant_type_id) }}" id="edit{{  $variantTypeName->variant_type_id}}">Edit</a>
                 {!! Form::open(['route' => ['variant-type.destroy',$variantTypeName->variant_type_id], 'method' => 'DELETE']) !!}
                 {!! Form::token() !!}
                     {!! Form::submit('Delete',['class'=> 'btn btn-danger']) !!}

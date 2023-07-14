@@ -40,4 +40,18 @@ class LoginTest extends DuskTestCase
             $browser->screenshot('example/testLogin');
         });
     }
+
+    public function testLogoutForm()
+    {
+        $this->browse(function (Browser $browser) {
+            $browser->visit('http://127.0.0.1:8000/')->assertSee('Laravel');
+            $browser->clickLink('Log in');
+            $browser->value('#email','Kajal123@gmail.com');
+            $browser->value('#password','12345678');
+            $browser->press('Login');
+            $browser->clickLink('Hello');
+            $browser->clickLink('Logout');
+            $browser->screenshot('example/testLogout');
+        });
+    }
 }
