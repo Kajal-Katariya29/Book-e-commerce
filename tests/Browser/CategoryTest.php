@@ -22,7 +22,7 @@ class CategoryTest extends DuskTestCase
         parent::setUp();
 
         $this->user = User::factory()->create();
-        $this->category = CategoryList::factory()->create();
+        $this->category = CategoryList::factory()->definition();
     }
 
     public function testLogin()
@@ -52,8 +52,7 @@ class CategoryTest extends DuskTestCase
             $this->testLogin();
             $browser->visit('http://127.0.0.1:8000/admin/categories')->assertSee('Book-e-Sale');
             $browser->clickLink('ADD Category');
-            $browser->type('category_name',$this->category->category_name);
-            $browser->select('category_parent_id',$this->category->category_parent_id);
+            $browser->type('category_name',$this->category['category_name']);
             $browser->press('Save');
             $browser->screenshot('category/testCreateCategory');
         });
@@ -73,11 +72,11 @@ class CategoryTest extends DuskTestCase
         $this->browse(function (Browser $browser) {
             $this->testLogin();
             $browser->visit('http://127.0.0.1:8000/admin/categories');
-            $browser->assertVisible("#edit{$this->category->cateogery_id}")->visit($browser->attribute("#edit{$this->category->cateogery_id}", 'href'));
-            $browser->type('category_name',$this->category->category_name);
-            $browser->select('category_parent_id',$this->category->category_parent_id);
-            $browser->screenshot('category/testEditCategory');
+            $browser->assertVisible("#edit{$this->category['cateogery_id']}")->visit($browser->attribute("#edit{$this->category['cateogery_id']}", 'href'));
+            $browser->type('category_name',$this->category['category_name']);
             $browser->press('Save');
+            $browser->screenshot('category/testEditCategory');
+
         });
     }
 }

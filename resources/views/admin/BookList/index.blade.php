@@ -48,7 +48,7 @@
             <td>{{ $bookDetail->author }}</td>
             <td>
                 {{-- @can('book.update') --}}
-                    <a class="btn btn-info" href="{{ route('books.edit',$bookDetail->book_id) }}">Edit</a>
+                    <a class="btn btn-info" href="{{ route('books.edit',$bookDetail->book_id) }}" id="edit{{ $bookDetail->book_id }}">Edit</a>
                 {{-- @endcan --}}
                 {{-- @can('book.delete') --}}
                     {!! Form::open(['route' => ['books.destroy',$bookDetail->book_id], 'method' => 'DELETE']) !!}

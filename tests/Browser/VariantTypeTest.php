@@ -22,7 +22,7 @@ class VariantTypeTest extends DuskTestCase
         parent::setUp();
 
         $this->user = User::factory()->create();
-        $this->varianttype = VariantType::factory()->create();
+        $this->varianttype = VariantType::factory()->definition();
     }
 
     public function testLogin()
@@ -52,8 +52,8 @@ class VariantTypeTest extends DuskTestCase
             $this->testLogin();
             $browser->visit('http://127.0.0.1:8000/admin/variant-type')->assertSee('Book-e-Sale');
             $browser->clickLink('ADD Varint Type');
-            $browser->select('variant_id',$this->varianttype->variant_id);
-            $browser->type('variant_type_name',$this->varianttype->variant_type_name);
+            $browser->select('variant_id');
+            $browser->type('variant_type_name',$this->varianttype['variant_type_name']);
             $browser->press('Save');
             $browser->screenshot('variantType/testCreateVariantType');
         });
@@ -73,9 +73,9 @@ class VariantTypeTest extends DuskTestCase
         $this->browse(function (Browser $browser) {
             $this->testLogin();
             $browser->visit('http://127.0.0.1:8000/admin/variant-type')->assertSee('Book-e-Sale');
-            $browser->assertVisible("#edit{$this->varianttype->variant_type_id }")->visit($browser->attribute("#edit{$this->varianttype->variant_type_id }", 'href'));
-            $browser->select('variant_id',$this->varianttype->variant_id);
-            $browser->type('variant_type_name',$this->varianttype->variant_type_name);
+            $browser->assertVisible("#edit{$this->varianttype['variant_type_id'] }")->visit($browser->attribute("#edit{$this->varianttype['variant_type_id'] }", 'href'));
+            $browser->select('variant_id');
+            $browser->type('variant_type_name',$this->varianttype['variant_type_name']);
             $browser->press('Save');
             $browser->screenshot('variantType/testEditVariantType');
         });

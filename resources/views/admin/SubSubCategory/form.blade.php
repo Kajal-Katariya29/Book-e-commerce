@@ -6,7 +6,7 @@
     </div>
     <div class="col-md-6 mt-2">
         {!! Form::label("category_parent_id", "Select Sub Category Name: ") !!}
-        {!! Form::select('category_parent_id',['option1' => 'Select Sub Category...'], null, [ 'class' => 'form-select mt-2', 'id' => 'category_parent_id']) !!}
+        {!! Form::select('category_parent_id',['option1' => 'Select Sub Category...'], null, ['placeholder' => 'Select Category...', 'class' => 'form-select mt-2', 'id' => 'category_parent_id']) !!}
         {!! $errors->first("category_parent_id",'<span class="text-danger">:message</span>') !!}
     </div>
     <div class="col-md-6">

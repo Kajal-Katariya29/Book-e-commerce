@@ -64,15 +64,17 @@ class BookListController extends Controller
     {
         // $this->authorize('book.create');
 
+        $subCatData = [];
+        $subCategory = [];
         $bookData = $this->bookList->first();
 
         $variant_type =  $this->variant->all()->pluck('variant_type','variant_id');
 
         $variant_type_name = $this->varianttype->all()->pluck('variant_type_name', 'variant_type_id');
 
-        $category_name =  $this->categorylist->all()->where('category_parent_id','0')->pluck('category_name','cateogery_id');
+        $category_name =  $this->categorylist->all()->where('category_parent_id',NULL)->pluck('category_name','cateogery_id');
 
-        return view('admin.BookList.create',compact('variant_type','variant_type_name','category_name','bookData'));
+        return view('admin.BookList.create',compact('variant_type','variant_type_name','category_name','bookData','subCatData','subCategory'));
     }
 
     /**
@@ -83,6 +85,7 @@ class BookListController extends Controller
      */
     public function store(BookListRequest $request)
     {
+        dd($request->all());
         $bookdata = $this->bookList->create([
             'name' => $request->name,
             'description' =>$request->description,
@@ -184,7 +187,7 @@ class BookListController extends Controller
         $variants = VariantMapping::get();
         $variant_type = Variant::select('variant_id','variant_type')->get()->pluck('variant_type','variant_id');
         $variant_type_name = VariantType::select('variant_type_id','variant_type_name')->get()->pluck('variant_type_name','variant_type_id');
-        $category_name = CategoryList::where('category_parent_id','0')->select('cateogery_id','category_name')->pluck('category_name','cateogery_id');
+        $category_name = CategoryList::where('category_parent_id',NULL)->select('cateogery_id','category_name')->pluck('category_name','cateogery_id');
 
         return view('admin.BookList.edit',compact('bookData','variant_type','variant_type_name','category_name','subCatData','catData','subCategory','subData','variants'));
     }

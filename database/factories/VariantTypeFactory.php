@@ -15,11 +15,11 @@ class VariantTypeFactory extends Factory
      *
      * @return array<string, mixed>
      */
+
+
     public function definition()
     {
-
         return [
-            'variant_id' => Variant::factory()->create()->variant_id,
             'variant_type_name' => $this->faker->name(),
         ];
     }

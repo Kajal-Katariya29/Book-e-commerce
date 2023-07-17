@@ -22,7 +22,7 @@ class VariantTest extends DuskTestCase
         parent::setUp();
 
         $this->user = User::factory()->create();
-        $this->variant = Variant::factory()->create();
+        $this->variant = Variant::factory()->definition();
     }
 
     public function testLogin()
@@ -52,7 +52,7 @@ class VariantTest extends DuskTestCase
             $this->testLogin();
             $browser->visit('http://127.0.0.1:8000/admin/variants')->assertSee('Book-e-Sale');
             $browser->clickLink('ADD Varints');
-            $browser->type('variant_type',$this->variant->variant_type);
+            $browser->type('variant_type',$this->variant['variant_type']);
             $browser->press('save');
             $browser->screenshot('variant/testCreateVariant');
         });
@@ -72,8 +72,8 @@ class VariantTest extends DuskTestCase
         $this->browse(function (Browser $browser) {
             $this->testLogin();
             $browser->visit('http://127.0.0.1:8000/admin/variants');
-            $browser->assertVisible("#edit{$this->variant->variant_id}")->visit($browser->attribute("#edit{$this->variant->variant_id}", 'href'));
-            $browser->type('variant_type',$this->variant->variant_type);
+            $browser->assertVisible("#edit{$this->variant['variant_id']}")->visit($browser->attribute("#edit{$this->variant['variant_id']}", 'href'));
+            $browser->type('variant_type',$this->variant['variant_type']);
             $browser->press('save');
             $browser->screenshot('variant/testEditVariant');
         });

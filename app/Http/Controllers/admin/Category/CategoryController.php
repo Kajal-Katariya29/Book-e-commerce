@@ -52,11 +52,11 @@ class CategoryController extends Controller
     public function store(CategoryListRequset $request)
     {
             $categoryData = CategoryList::create([
-                'category_parent_id' => '0',
+                'category_parent_id' => NULL,
                 'category_name' => $request->category_name,
             ]);
 
-        return redirect()->route('sub-categories.index')->with('success','Category data is added successfully !');
+        return redirect()->route('categories.index')->with('success','Category data is added successfully !');
     }
 
     /**
@@ -95,7 +95,7 @@ class CategoryController extends Controller
     public function update(CategoryListRequset $request, $id)
     {
             $categoryData = CategoryList::where('cateogery_id',$id)->update([
-                'category_parent_id' => '0',
+                'category_parent_id' => 'NULL',
                 'category_name' => $request->category_name,
             ]);
 

@@ -15,7 +15,7 @@ class categorySubController extends Controller
      */
     public function index()
     {
-        $categoryDetails = CategoryList::where('category_parent_id','!=',0)->get();
+        $categoryDetails = CategoryList::where('category_parent_id','!=',NULL)->get();
         return view('admin.SubCategory.index',compact('categoryDetails'));
     }
 
@@ -26,7 +26,7 @@ class categorySubController extends Controller
      */
     public function create()
     {
-         $category_parent_id = CategoryList::where('category_parent_id','0')->select('cateogery_id','category_name')->pluck('category_name','cateogery_id');
+         $category_parent_id = CategoryList::where('category_parent_id',NULL)->select('cateogery_id','category_name')->pluck('category_name','cateogery_id');
          return view('admin.SubCategory.create',compact('category_parent_id'));
     }
 

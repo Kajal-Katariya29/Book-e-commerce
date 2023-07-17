@@ -16,7 +16,6 @@ class categorySubSubController extends Controller
     public function index()
     {
         $categoryDetails = CategoryList::with('subCategory')->get();
-        dd($categoryDetails);
         return view('admin.SubSubCategory.index',compact('categoryDetails'));
     }
 
@@ -27,8 +26,9 @@ class categorySubSubController extends Controller
      */
     public function create()
     {
-        $category_parent_parent_id = CategoryList::where('category_parent_id','0')->select('cateogery_id','category_name')->pluck('category_name','cateogery_id');
-        return view('admin.SubSubCategory.create',compact('category_parent_parent_id'));
+        $category_parent_parent_id = CategoryList::where('category_parent_id',NULL)->select('cateogery_id','category_name')->pluck('category_name','cateogery_id');
+        $subcategory = [];
+        return view('admin.SubSubCategory.create',compact('category_parent_parent_id','subcategory'));
     }
 
     public function fetchCategory(Request $request)
