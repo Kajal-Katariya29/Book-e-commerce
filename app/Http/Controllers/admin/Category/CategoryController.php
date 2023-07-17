@@ -39,8 +39,8 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        $category_parent_id = CategoryList::select('cateogery_id','category_name')->get()->pluck('category_name','cateogery_id');
-        return view('admin.Category.create',compact('category_parent_id'));
+        // $category_parent_id = CategoryList::select('cateogery_id','category_name')->get()->pluck('category_name','cateogery_id');
+        return view('admin.Category.create');
     }
 
     /**
@@ -51,20 +51,12 @@ class CategoryController extends Controller
      */
     public function store(CategoryListRequset $request)
     {
-        if($request->category_parent_id == null ){
             $categoryData = CategoryList::create([
                 'category_parent_id' => '0',
                 'category_name' => $request->category_name,
             ]);
-        }
-        else{
-            $categoryData = CategoryList::create([
-                'category_parent_id' => $request->category_parent_id,
-                'category_name' => $request->category_name,
-            ]);
-        }
 
-        return redirect()->route('categories.index')->with('success','Category data is added successfully !');
+        return redirect()->route('sub-categories.index')->with('success','Category data is added successfully !');
     }
 
     /**
@@ -88,9 +80,9 @@ class CategoryController extends Controller
     {
         $categoryData = CategoryList::where('cateogery_id',$id)->first();
 
-        $category_parent_id = CategoryList::select('cateogery_id','category_name')->get()->pluck('category_name','cateogery_id');
+        // $category_parent_id = CategoryList::select('cateogery_id','category_name')->get()->pluck('category_name','cateogery_id');
 
-        return view('admin.Category.edit',compact('categoryData','category_parent_id'));
+        return view('admin.Category.edit',compact('categoryData'));
     }
 
     /**
@@ -102,18 +94,10 @@ class CategoryController extends Controller
      */
     public function update(CategoryListRequset $request, $id)
     {
-        if($request->category_parent_id == null ){
             $categoryData = CategoryList::where('cateogery_id',$id)->update([
                 'category_parent_id' => '0',
                 'category_name' => $request->category_name,
             ]);
-        }
-        else{
-            $categoryData = CategoryList::where('cateogery_id',$id)->update([
-                'category_parent_id' => $request->category_parent_id,
-                'category_name' => $request->category_name,
-            ]);
-        }
 
         if(empty($categoryData)){
 

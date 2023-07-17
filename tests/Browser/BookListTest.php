@@ -74,7 +74,7 @@ class BookListTest extends DuskTestCase
             // dd($this->category->cateogery_id);
             $browser->select('category_name',$this->category->category_name);
             $browser->pause(5000);
-            // $browser->attach('images[]',$this->bookMedia->media_name);
+            $browser->attach('images[]',$this->bookMedia->media_name);
             // $browser->select('variant_id',$this->varianttype->variant_id);
             // $browser->press('Save');
             $browser->screenshot('bookList/testCreateBook');

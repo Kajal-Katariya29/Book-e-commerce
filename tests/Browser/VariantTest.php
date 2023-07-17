@@ -78,15 +78,5 @@ class VariantTest extends DuskTestCase
             $browser->screenshot('variant/testEditVariant');
         });
     }
-
-    // public function testDeleteVariant()
-    // {
-    //     $this->browse(function (Browser $browser)  {
-    //         $this->testLogin();
-    //         $browser->visit('http://127.0.0.1:8000/admin/variants');
-    //         $browser->assertVisible("#delete$$this->variant->variant_id")->visit($browser->attribute("#delete$this->variant->variant_id", 'action'));
-    //         $browser->screenshot('example/testDeleteVariant');
-    //     });
-    // }
 }
 

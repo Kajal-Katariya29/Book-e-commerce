@@ -94,8 +94,7 @@ class BookTest extends TestCase
             'variant_id' => [$variant->variant_id],
             'variant_type_name' => [$variantType->variant_type_id],
             'images' => $file,
-            'category_name' => $category->cateogery_id,
-            'subCategory_name' => $category->category_parent_id,
+            'sub_sub_category_name' => $category->cateogery_id,
             'book_price' => [$variantMapping->book_price],
         ]);
 
@@ -157,8 +156,7 @@ class BookTest extends TestCase
             'variant_id' => [$variant->variant_id],
             'variant_type_name' => [$variantType->variant_type_id],
             'images' => $file,
-            'category_name' => $category->cateogery_id,
-            'subCategory_name' => $category->category_parent_id,
+            'sub_sub_category_name' => $category->cateogery_id,
             'book_price' => [$variantMapping->book_price],
         ]);
 

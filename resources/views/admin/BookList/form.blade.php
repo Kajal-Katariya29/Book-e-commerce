@@ -85,14 +85,24 @@
     </div>
     <div class="col-6 mt-2">
         {!! Form::label("category_name", "Select Category Name: ") !!}
-        {!! Form::select('category_name',$category_name, null, ['placeholder' => 'Select Category...', 'class' => 'form-select mt-2','id' => 'mainSelect']) !!}
+        {!! Form::select('category_name',$category_name, null, ['placeholder' => 'Select Category...', 'class' => 'form-select mt-2','id' => 'parentCategory']) !!}
         {!! $errors->first("category_name",'<span class="text-danger">:message</span>') !!}
     </div>
-    <div id="addSubCategory">
-
+    <div class="col-6 mt-2">
+        {!! Form::label("sub_category_name", "Select Sub Category Name: ") !!}
+        {!! Form::select('sub_category_name', $subCatData, null, ['placeholder'=> 'Select sub sub category data','class' => 'form-select mt-2','id' => 'subCategory']) !!}
+        {!! $errors->first("sub_category_name",'<span class="text-danger">:message</span>') !!}
     </div>
+    <div class="col-6 mt-2">
+        {!! Form::label("sub_sub_category_name", "Select Sub Sub Category Name: ") !!}
+        {!! Form::select('sub_sub_category_name', $subCategory, $bookData ? $bookData->categories->pluck('cateogery_id') : null, ['placeholder'=> 'Select sub sub category data','class' => 'form-select mt-2','id' => 'subSubCategory']) !!}
+        {!! $errors->first("sub_sub_category_name",'<span class="text-danger">:message</span>') !!}
+    </div>
+    {{-- <div id="addSubCategory">
+
+    </div> --}}
 </div>
-<div id="subCatConatiner">
+{{-- <div id="subCatConatiner">
 @if (!empty($subCatData))
     <div class="col-6 ms-4">
         {!! Form::label("subCategory_name", "Select Sub Category Name: ") !!}
@@ -107,7 +117,7 @@
         {!! $errors->first("subCategory_name",'<span class="text-danger">:message</span>') !!}
     </div>
 @endif
-</div>
+</div> --}}
 <div class="d-flex bd-highlight mb-3 m-5">
     {!! Form::button('Save', ['type' => 'submit', 'class' => 'btn btn-primary']) !!}
 </div>

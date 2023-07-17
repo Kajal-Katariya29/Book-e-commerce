@@ -72,22 +72,79 @@
 
         $('.select2').select2();
 
-        $("#categorySelect").val({{ $subData[0] }});
+        $("#subCategory").val({{ $subData[0] }});
 
-        $("#mainSelect").val({{ $catData[0] }});
+        $("#parentCategory").val({{ $catData[0] }});
 
-        $('#mainSelect').on("change",function(){
-            var categoryId = $(this).val();
-            $('#addSubCategory').html("");
-            $('#subCatConatiner').html("");
-            fetchCategories(categoryId);
+        $("#parentCategory").on("change", function() {
+            var categoryParentId = $(this).val();
+            console.log(categoryParentId);
+            $("#subCategory").html("");
+            $.ajax({
+                url: "/admin/fetch-sub-category",
+                type: "POST",
+                data: {
+                    category_parent_id: categoryParentId,
+                    _token: $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(result) {
+                    $("#subCategory").html('<option value="">Select Sub Category</option>');
+                    $.each(result, function(key, value) {
+                        $("#subCategory").append(
+                            '<option value="' +
+                            value.cateogery_id +
+                            '">' +
+                            value.category_name +
+                            "</option>"
+                        );
+                    });
+                },
+                error: function(msg) {
+                    console.log(msg);
+                },
+            });
         });
 
-        $(document).on("change", ".subcategoryDropdown", function() {
-            console.log("here");
-            var categoryId = $(this).val();
-            fetchCategories(categoryId);
+        $("#subCategory").on("change", function() {
+            var categorySubtId = $(this).val();
+            console.log(categorySubtId);
+            $("#subSubCategory").html("");
+            $.ajax({
+                url: "/admin/fetch-sub-sub-category",
+                type: "POST",
+                data: {
+                    category_sub_id: categorySubtId,
+                    _token: $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(result) {
+                    $("#subSubCategory").html('<option value="">Select Sub Category</option>');
+                    $.each(result, function(key, value) {
+                        $("#subSubCategory").append(
+                            '<option value="' +
+                            value.cateogery_id +
+                            '">' +
+                            value.category_name +
+                            "</option>"
+                        );
+                    });
+                },
+                error: function(msg) {
+                    console.log(msg);
+                },
+            });
         });
+        // $('#mainSelect').on("change",function(){
+        //     var categoryId = $(this).val();
+        //     $('#addSubCategory').html("");
+        //     $('#subCatConatiner').html("");
+        //     fetchCategories(categoryId);
+        // });
+
+        // $(document).on("change", ".subcategoryDropdown", function() {
+        //     console.log("here");
+        //     var categoryId = $(this).val();
+        //     fetchCategories(categoryId);
+        // });
 
         function fetchCategories(categoryId){
             $.ajax({

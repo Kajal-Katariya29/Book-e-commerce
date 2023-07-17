@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\admin\BookListController;
 use App\Http\Controllers\admin\Category\CategoryController;
+use App\Http\Controllers\admin\Category\categorySubController;
+use App\Http\Controllers\admin\Category\categorySubSubController;
 use App\Http\Controllers\admin\Role\PermissionController;
 use App\Http\Controllers\admin\Role\RoleController;
 use App\Http\Controllers\admin\Role\RolePermissionController;
@@ -88,6 +90,8 @@ Route::group(['prefix' => 'admin'], function(){
 
         Route::resource('/books', BookListController::class);
         Route::post('/delete-image/{id}',[BookListController::class,'deleteImage'])->name('books.delete.image');
+        Route::post('/fetch-sub-category',[BookListController::class,'fetchSubCategory'])->name('fetchSubCategory');
+        Route::post('/fetch-sub-sub-category',[BookListController::class,'fetchSubSubCategory'])->name('fetchSubSubCategory');
 
         //routes for variants
         Route::resource('/variants', VariantsController::class);
@@ -98,7 +102,13 @@ Route::group(['prefix' => 'admin'], function(){
 
         //routes for categories
         Route::resource('/categories',CategoryController::class);
-        Route::post('/fetch-category',[BookListController::class,'fetchCategory'])->name('fetchCategory');
+
+        //routes for sub categories
+        Route::resource('/sub-categories',categorySubController::class);
+
+        //route for sub sub category
+        Route::resource('/sub-sub-categories',categorySubSubController::class);
+        Route::post('/fetch-category',[categorySubSubController::class,'fetchCategory'])->name('fetchCategory');
 
         //routes for role and role user
         Route::resource('/roles',RoleController::class);
