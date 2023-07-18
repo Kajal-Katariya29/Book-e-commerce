@@ -53,9 +53,10 @@
                 {{-- @can('book.delete') --}}
                     {!! Form::open(['route' => ['books.destroy',$bookDetail->book_id], 'method' => 'DELETE']) !!}
                     {!! Form::token() !!}
-                        {!! Form::submit('Delete',['class'=> 'btn btn-danger']) !!}
+                        {!! Form::submit('Delete',['class'=> 'btn btn-danger', 'dusk' => "delete_{$bookDetail->book_id}"]) !!}
                     {!! Form::close() !!}
                 {{-- @endcan --}}
+
             </td>
         </tr>
     @endforeach

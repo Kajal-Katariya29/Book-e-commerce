@@ -18,7 +18,7 @@ class CategoryListFactory extends Factory
     public function definition()
     {
         return [
-            'category_parent_id' => $this->faker->randomElement(CategoryList::all()->pluck('cateogery_id')),
+            // 'category_parent_id' => $this->faker->randomElement(CategoryList::all()->pluck('cateogery_id')),
             'category_name' => $this->faker->name(),
         ];
     }

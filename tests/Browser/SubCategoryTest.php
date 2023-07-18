@@ -46,14 +46,20 @@ class SubCategoryTest extends DuskTestCase
         });
     }
 
+    public function getSubCategoryData(){
+        $category = CategoryList::factory()->create();
+        return $category;
+    }
+
     public function testCreateSubCategory()
     {
         $this->browse(function (Browser $browser){
             $this->testLogin();
+            $category = $this->getSubCategoryData();
             $browser->visit('http://127.0.0.1:8000/admin/sub-categories')->assertSee('Book-e-Sale');
             $browser->clickLink('ADD Sub Category');
-            $browser->select('category_parent_id',$this->category['category_parent_id']);
-            $browser->type('category_name',$this->category['category_name']);
+            $browser->select('category_parent_id',$category->cateogery_id);
+            $browser->type('category_name', $this->category['category_name']);
             $browser->press('Save');
             $browser->screenshot('subcategory/testCreateSubCategory');
         });

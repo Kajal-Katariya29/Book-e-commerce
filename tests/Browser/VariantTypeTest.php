@@ -46,14 +46,21 @@ class VariantTypeTest extends DuskTestCase
         });
     }
 
+    public function getVariantData(){
+        $variant = Variant::factory()->create();
+        $variantType = VariantType::factory()->create(['variant_id' => $variant->variant_id]);
+        return $variantType;
+    }
+
     public function testCreateVariantType()
     {
         $this->browse(function (Browser $browser){
             $this->testLogin();
+            $variantType = $this->getVariantData();
             $browser->visit('http://127.0.0.1:8000/admin/variant-type')->assertSee('Book-e-Sale');
             $browser->clickLink('ADD Varint Type');
-            $browser->select('variant_id');
-            $browser->type('variant_type_name',$this->varianttype['variant_type_name']);
+            $browser->select('variant_id',$variantType->variant_id);
+            $browser->type('variant_type_name',$variantType->variant_type_name);
             $browser->press('Save');
             $browser->screenshot('variantType/testCreateVariantType');
         });
@@ -72,12 +79,24 @@ class VariantTypeTest extends DuskTestCase
     {
         $this->browse(function (Browser $browser) {
             $this->testLogin();
+            $variantType = $this->getVariantData();
             $browser->visit('http://127.0.0.1:8000/admin/variant-type')->assertSee('Book-e-Sale');
-            $browser->assertVisible("#edit{$this->varianttype['variant_type_id'] }")->visit($browser->attribute("#edit{$this->varianttype['variant_type_id'] }", 'href'));
-            $browser->select('variant_id');
-            $browser->type('variant_type_name',$this->varianttype['variant_type_name']);
+            $browser->assertVisible("#edit{$variantType->variant_type_id }")->visit($browser->attribute("#edit{$variantType->variant_type_id }", 'href'));
+            $browser->select('variant_id',$variantType->variant_id );
+            $browser->type('variant_type_name',$variantType->variant_type_name);
             $browser->press('Save');
             $browser->screenshot('variantType/testEditVariantType');
+        });
+    }
+
+    public function testDeleteVariantType()
+    {
+        $this->browse(function (Browser $browser) {
+            $this->testLogin();
+            $variantType = $this->getVariantData();
+            $browser->visit('http://127.0.0.1:8000/admin/variant-type');
+            $browser->click("@delete_{$variantType->variant_type_id}");
+            $browser->screenshot('variant/testDeleteVariantType');
         });
     }
 }

@@ -46,6 +46,11 @@ class CategoryTest extends DuskTestCase
         });
     }
 
+    public function getCategoryData(){
+        $category = CategoryList::factory()->create(['category_parent_id' => NULL]);
+        return $category;
+    }
+
     public function testCreateCategory()
     {
         $this->browse(function (Browser $browser){
@@ -71,12 +76,22 @@ class CategoryTest extends DuskTestCase
     {
         $this->browse(function (Browser $browser) {
             $this->testLogin();
+            $categories =  $this->getCategoryData();
             $browser->visit('http://127.0.0.1:8000/admin/categories');
-            $browser->assertVisible("#edit{$this->category['cateogery_id']}")->visit($browser->attribute("#edit{$this->category['cateogery_id']}", 'href'));
-            $browser->type('category_name',$this->category['category_name']);
+            $browser->assertVisible("#edit{$categories->cateogery_id }")->visit($browser->attribute("#edit{$categories->cateogery_id }", 'href'));
+            $browser->type('category_name',$categories->category_name);
             $browser->press('Save');
             $browser->screenshot('category/testEditCategory');
+        });
+    }
 
+    public function testDeleteCategory(){
+        $this->browse(function (Browser $browser) {
+            $this->testLogin();
+            $categories =  $this->getCategoryData();
+            $browser->visit('http://127.0.0.1:8000/admin/categories');
+            $browser->click("@delete_{$categories->cateogery_id}");
+            $browser->screenshot('variant/testDeleteCategory');
         });
     }
 }

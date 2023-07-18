@@ -85,7 +85,6 @@ class BookListController extends Controller
      */
     public function store(BookListRequest $request)
     {
-        dd($request->all());
         $bookdata = $this->bookList->create([
             'name' => $request->name,
             'description' =>$request->description,
@@ -248,9 +247,9 @@ class BookListController extends Controller
         }
 
         if($request->sub_sub_category_name){
-            $this->categorymapping->create('book_id',$id)->update([
+            $this->categorymapping->where('book_id',$id)->update([
                 'book_id' => $id,
-                'cateogery_id' => $request->subCategory_name
+                'cateogery_id' => $request->sub_sub_category_name
             ]);
         }
 

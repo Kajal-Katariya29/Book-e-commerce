@@ -98,8 +98,8 @@
         {!! Form::select('sub_sub_category_name', $subCategory, $bookData ? $bookData->categories->pluck('cateogery_id') : null, ['placeholder'=> 'Select sub sub category data','class' => 'form-select mt-2','id' => 'subSubCategory']) !!}
         {!! $errors->first("sub_sub_category_name",'<span class="text-danger">:message</span>') !!}
     </div>
-<div class="d-flex bd-highlight mb-3">
-    {!! Form::button('Save', ['type' => 'submit', 'class' => 'btn btn-primary']) !!}
-</div>
+    <div class="d-flex bd-highlight pt-3 ms-3">
+        {!! Form::button('Save', ['type' => 'submit', 'class' => 'btn btn-primary editData', 'id' => 'editData']) !!}
+    </div>
 </div>
 

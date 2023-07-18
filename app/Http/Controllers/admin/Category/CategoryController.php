@@ -95,7 +95,7 @@ class CategoryController extends Controller
     public function update(CategoryListRequset $request, $id)
     {
             $categoryData = CategoryList::where('cateogery_id',$id)->update([
-                'category_parent_id' => 'NULL',
+                'category_parent_id' => NULL,
                 'category_name' => $request->category_name,
             ]);
 
@@ -104,7 +104,7 @@ class CategoryController extends Controller
             return redirect()->route('categories.index')->with('error','The Data is not available !!');
         }
 
-        return redirect()->route('categories.index')->with('success','Book Record Updated successfully !!');
+        return redirect()->route('categories.index')->with('success','Category Data Updated successfully !!');
     }
 
     /**
