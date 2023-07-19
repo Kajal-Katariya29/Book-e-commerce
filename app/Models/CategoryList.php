@@ -23,9 +23,18 @@ class CategoryList extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function subCategory(): HasMany
+    public function parentCategory(): HasMany
     {
         return $this->hasMany(CategoryList::class, 'cateogery_id', 'category_parent_id');
     }
 
+    /**
+     * Get all of the comments for the CategoryList
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function childCategory(): HasMany
+    {
+        return $this->hasMany(CategoryList::class, 'category_parent_id', 'cateogery_id');
+    }
 }

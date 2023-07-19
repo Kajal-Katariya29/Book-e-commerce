@@ -39,8 +39,8 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        // $category_parent_id = CategoryList::select('cateogery_id','category_name')->get()->pluck('category_name','cateogery_id');
-        return view('admin.Category.create');
+        $category_parent_id = CategoryList::select('cateogery_id','category_name')->pluck('category_name','cateogery_id');
+        return view('admin.Category.create',compact('category_parent_id'));
     }
 
     /**
@@ -51,10 +51,20 @@ class CategoryController extends Controller
      */
     public function store(CategoryListRequset $request)
     {
+        if($request->category_parent_id !== null)
+        {
             $categoryData = CategoryList::create([
-                'category_parent_id' => NULL,
+                'category_parent_id' => $request->category_parent_id,
                 'category_name' => $request->category_name,
             ]);
+        }
+        else{
+            $categoryData = CategoryList::create([
+                'category_parent_id' => Null,
+                'category_name' => $request->category_name,
+            ]);
+        }
+
 
         return redirect()->route('categories.index')->with('success','Category data is added successfully !');
     }
@@ -104,7 +114,7 @@ class CategoryController extends Controller
             return redirect()->route('categories.index')->with('error','The Data is not available !!');
         }
 
-        return redirect()->route('categories.index')->with('success','Category Data Updated successfully !!');
+        return redirect()->route('categories.index')->with('success','Category Data  Updated successfully !!');
     }
 
     /**

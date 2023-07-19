@@ -32,122 +32,55 @@
     $(document).ready(function(){
 
         $('.rowAdd').on("click",function(){
-            // newRowAdd =
-            // '<tr><td> {!! Form::select('variant_id[]',$variant_type, null, ['placeholder' => 'Select Variant...', 'class' => 'form-select mt-2']) !!}</td>' +
-            // '<td>{!! Form::select('variant_type_name[]', $variant_type_name, null, ['placeholder' => 'Select Variant...','class' => 'form-select mt-2']) !!}</td>' +
-            // '<td>{!! Form::text("price[]", null, ['class' => 'form-control price mt-1']) !!}</td>' +
-            // '<td> <button type="button" class="btn btn-secondary rowDelete" id="rowAdd">-</button> </tr>';
-                $('#inputVariant').append('<tr>'+$('#inputVariant').find('tr:last').html()+'</tr>')
+            $('#inputVariant').append('<tr>'+$('#inputVariant').find('tr:last').html()+'</tr>')
         });
 
         $(document).on("click", ".rowDelete", function() {
             $(this).parent().parent().remove();
         });
 
-        $('.select2').select2();
-
-        $("#parentCategory").on("change", function() {
-            var categoryParentId = $(this).val();
-            console.log(categoryParentId);
-            $("#subCategory").html("");
-            $.ajax({
-                url: "/admin/fetch-sub-category",
-                type: "POST",
-                data: {
-                    category_parent_id: categoryParentId,
-                    _token: $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(result) {
-                    $("#subCategory").html('<option value="">Select Sub Category</option>');
-                    $.each(result, function(key, value) {
-                        $("#subCategory").append(
-                            '<option value="' +
-                            value.cateogery_id +
-                            '">' +
-                            value.category_name +
-                            "</option>"
-                        );
-                    });
-                },
-                error: function(msg) {
-                    console.log(msg);
-                },
-            });
+        $('#parentCategory').on("change",function(){
+            var categoryId = $(this).val();
+            $('#addSubCategory').html("");
+            fetchCategories(categoryId);
         });
 
-        $("#subCategory").on("change", function() {
-            var categorySubtId = $(this).val();
-            console.log(categorySubtId);
-            $("#subSubCategory").html("");
-            $.ajax({
-                url: "/admin/fetch-sub-sub-category",
-                type: "POST",
-                data: {
-                    category_sub_id: categorySubtId,
-                    _token: $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(result) {
-                    $("#subSubCategory").html('<option value="">Select Sub Category</option>');
-                    $.each(result, function(key, value) {
-                        $("#subSubCategory").append(
-                            '<option value="' +
-                            value.cateogery_id +
-                            '">' +
-                            value.category_name +
-                            "</option>"
-                        );
-                    });
-                },
-                error: function(msg) {
-                    console.log(msg);
-                },
-            });
+        $(document).on("change", ".subcategoryDropdown", function() {
+            var categoryId = $(this).val();
+            fetchCategories(categoryId);
         });
 
-        // $('#mainSelect').on("change",function(){
-        //     var categoryId = $(this).val();
-        //     $('#addSubCategory').html("");
-        //     fetchCategories(categoryId);
-        // });
+        function fetchCategories(categoryId){
+            $.ajax({
+                url: "/admin/fetch-category",
+                type: "POST",
+                data: {
+                    categoryId: categoryId,
+                    _token: $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(result){
+                    if(result.length > 0){
+                        var newDiv = $('<div class="col-md-6 mt-2">' +
+                            '{!! Form::label("subCategory_name", "Select Sub Category Name: ") !!}' +
+                            '{!! Form::select("subCategory_name", [], null, ["class" => "form-control mt-2 subcategoryDropdown", "id" => ""]) !!}' +
+                            '{!! $errors->first("subCategory_name", '<span class="text-danger">:message</span>') !!}' +
+                            '</div>');
 
-        // $(document).on("change", ".subcategoryDropdown", function() {
-        //     var categoryId = $(this).val();
-        //     fetchCategories(categoryId);
-        // });
+                        $('#addSubCategory').append(newDiv);
 
-        // function fetchCategories(categoryId){
-        //     $.ajax({
-        //         url: "/admin/fetch-category",
-        //         type: "POST",
-        //         data: {
-        //             categoryId: categoryId,
-        //             _token: $('meta[name="csrf-token"]').attr('content')
-        //         },
-        //         success: function(result){
-        //             if(result.length > 0){
-        //                 var newDiv = $('<div class="col-md-6 mt-2">' +
-        //                     '{!! Form::label("subCategory_name", "Select Sub Category Name: ") !!}' +
-        //                     '{!! Form::select("subCategory_name", [], null, ["class" => "form-control mt-2 subcategoryDropdown", "id" => ""]) !!}' +
-        //                     '{!! $errors->first("subCategory_name", '<span class="text-danger">:message</span>') !!}' +
-        //                     '</div>');
+                        var subDropDownList = $('.subcategoryDropdown');
 
-        //                 $('#addSubCategory').append(newDiv);
-
-        //                 var subDropDownList = $('.subcategoryDropdown');
-
-        //                 subDropDownList.last().append('<option value="">Select Sub Category</option>');
-        //                     $.each(result, function(index, category) {
-        //                         subDropDownList.last().append('<option value="' + category.cateogery_id + '">' + category.category_name + '</option>');
-        //                     });
-        //                 }
-        //             else {
-        //             }
-        //         },
-        //         error: function (msg) {
-        //             console.log(msg);
-        //         }
-        //     });
-        // }
+                        subDropDownList.last().append('<option value="">Select Sub Category</option>');
+                            $.each(result, function(index, category) {
+                                subDropDownList.last().append('<option value="' + category.cateogery_id + '">' + category.category_name + '</option>');
+                            });
+                        }
+                },
+                error: function (msg) {
+                    console.log(msg);
+                }
+            });
+        }
     });
 
 </script>

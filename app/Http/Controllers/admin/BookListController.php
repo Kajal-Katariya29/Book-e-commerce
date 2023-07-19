@@ -15,6 +15,7 @@ use App\Policies\BookPolicy;
 use DB;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\BookListRequest;
+use Illuminate\Support\Arr;
 
 class BookListController extends Controller
 {
@@ -107,9 +108,7 @@ class BookListController extends Controller
         $variantIds = $data['variant_id'];
         $variantTypeNames = $data['variant_type_name'];
         foreach ($variantIds as $key => $variantId) {
-
             $variantTypeName = $variantTypeNames[$key];
-
             if ($variantId !== null) {
                 $variantMapping = $this->variantmapping;
                 $variantMapping->variant_id = $variantId;
@@ -120,10 +119,16 @@ class BookListController extends Controller
             }
         }
 
-        if($request->sub_sub_category_name){
+        if($request->subCategory_name){
             $this->categorymapping->create([
                 'book_id' => $bookdata->toArray()['book_id'],
-                'cateogery_id' => $request->sub_sub_category_name
+                'cateogery_id' => $request->subCategory_name
+            ]);
+        }
+        else{
+            $this->categorymapping->create([
+                'book_id' => $bookdata->toArray()['book_id'],
+                'cateogery_id' => $request->category_name
             ]);
         }
 
@@ -141,15 +146,9 @@ class BookListController extends Controller
         //
     }
 
-    public function fetchSubCategory(Request $request)
+    public function fetchCategory(Request $request)
     {
-        $fetchCategoryData = CategoryList::where('category_parent_id',$request->category_parent_id)->get(['cateogery_id','category_name']);
-        return response()->json($fetchCategoryData);
-    }
-
-    public function fetchSubSubCategory(Request $request)
-    {
-        $fetchCategoryData = CategoryList::where('category_parent_id',$request->category_sub_id)->get(['cateogery_id','category_name']);
+        $fetchCategoryData = CategoryList::where('category_parent_id',$request->categoryId)->get(['cateogery_id','category_name']);
         return response()->json($fetchCategoryData);
     }
 
@@ -163,32 +162,35 @@ class BookListController extends Controller
     {
         // $this->authorize('book.book_edit');
         $bookData = $this->bookList->where('book_id',$id)->with('variants','bookMedia','categories')->first();
-        $categoryData = CategoryList::where('cateogery_id',$bookData->categories->pluck('cateogery_id'))->with('subCategory')->get();
+        $categoryData = CategoryList::where('cateogery_id',$bookData->categories->pluck('cateogery_id'))->first();
 
-        $catData = [];
-        $subData = [];
-        foreach ($categoryData as $category) {
-            $subcategories = $category->subCategory;
-            foreach ($subcategories as $subcategory) {
-                $catData[] = $subcategory->category_parent_id;
-            }
-        }
+        $category = CategoryList::where('cateogery_id',$categoryData->cateogery_id)->first();
+        $subcategoryIds = $this->getAllCategories($category->cateogery_id);
 
-        foreach ($categoryData as $category) {
-            $subcategories = $category->subCategory;
-            foreach ($subcategories as $subcategory) {
-                $subData[] = $subcategory->cateogery_id;
-            }
-        }
+        $subCategory = array_reverse($subcategoryIds);
+        $category = [];
 
-        $subCatData = CategoryList::where('category_parent_id',$catData)->select('cateogery_id','category_name')->pluck('category_name','cateogery_id');
-        $subCategory = CategoryList::where('category_parent_id',$subData)->select('cateogery_id','category_name')->pluck('category_name','cateogery_id');
-        $variants = VariantMapping::get();
+        $variants = VariantMapping::where('book_id',$id)->get();
         $variant_type = Variant::select('variant_id','variant_type')->get()->pluck('variant_type','variant_id');
         $variant_type_name = VariantType::select('variant_type_id','variant_type_name')->get()->pluck('variant_type_name','variant_type_id');
         $category_name = CategoryList::where('category_parent_id',NULL)->select('cateogery_id','category_name')->pluck('category_name','cateogery_id');
 
-        return view('admin.BookList.edit',compact('bookData','variant_type','variant_type_name','category_name','subCatData','catData','subCategory','subData','variants'));
+        return view('admin.BookList.edit',compact('bookData','variant_type','variant_type_name','category_name','variants','category','subCategory'));
+    }
+
+    public function getAllCategories($categoryId)
+    {
+        $categories = [];
+        $categories[] = $categoryId;
+
+        $parentCategories = CategoryList::where('cateogery_id', $categoryId)->with('parentCategory')->get();
+        foreach ($parentCategories as $category){
+            foreach($category->parentCategory as $subCategory)
+            {
+                $categories[] = $this->getAllCategories($subCategory->cateogery_id ,$categories);
+            }
+        }
+        return Arr::flatten($categories);
     }
 
     /**

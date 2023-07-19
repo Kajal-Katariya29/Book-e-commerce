@@ -83,21 +83,21 @@
             @endforeach
         @endif
     </div>
-    <div class="col-6 mt-2">
-        {!! Form::label("category_name", "Select Category Name: ") !!}
-        {!! Form::select('category_name',$category_name, null, ['placeholder'=> 'Select category data','class' => 'form-select mt-2','id' => 'parentCategory']) !!}
-        {!! $errors->first("category_name",'<span class="text-danger">:message</span>') !!}
+    {{-- @if(empty($allSubCategory)) --}}
+        <div class="col-6 mt-2">
+            {!! Form::label("category_name", "Select Category Name: ") !!}
+            {!! Form::select('category_name',$category_name, isset($subCategory[0])?$subCategory[0]:null, ['placeholder'=> 'Select Parent Category data....','class' => 'form-select mt-2','id' => 'parentCategory']) !!}
+            {!! $errors->first("category_name",'<span class="text-danger">:message</span>') !!}
+        </div>
+    {{-- @endif --}}
+
+    <div id="addSubCategory">
+
     </div>
-    <div class="col-6 mt-2">
-        {!! Form::label("sub_category_name", "Select Sub Category Name: ") !!}
-        {!! Form::select('sub_category_name', $subCatData, null, ['placeholder'=> 'Select sub category data','class' => 'form-select mt-2','id' => 'subCategory']) !!}
-        {!! $errors->first("sub_category_name",'<span class="text-danger">:message</span>') !!}
-    </div>
-    <div class="col-6 mt-2">
-        {!! Form::label("sub_sub_category_name", "Select Sub Sub Category Name: ") !!}
-        {!! Form::select('sub_sub_category_name', $subCategory, $bookData ? $bookData->categories->pluck('cateogery_id') : null, ['placeholder'=> 'Select sub sub category data','class' => 'form-select mt-2','id' => 'subSubCategory']) !!}
-        {!! $errors->first("sub_sub_category_name",'<span class="text-danger">:message</span>') !!}
-    </div>
+
+    {!! Form::hidden('sub_category_id[]', $subCategory?  $subCategory[1] : null ,null,['id '=>'sub_category_id']) !!}
+    {!! Form::hidden('sub_sub_category_id[]', $subCategory?  $subCategory[2] : null , null ,['id '=>'sub_sub_category_id']) !!}
+
     <div class="d-flex bd-highlight pt-3 ms-3">
         {!! Form::button('Save', ['type' => 'submit', 'class' => 'btn btn-primary editData', 'id' => 'editData']) !!}
     </div>
