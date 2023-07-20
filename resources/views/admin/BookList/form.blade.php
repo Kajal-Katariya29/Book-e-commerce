@@ -83,20 +83,30 @@
             @endforeach
         @endif
     </div>
-    {{-- @if(empty($allSubCategory)) --}}
-        <div class="col-6 mt-2">
-            {!! Form::label("category_name", "Select Category Name: ") !!}
-            {!! Form::select('category_name',$category_name, isset($subCategory[0])?$subCategory[0]:null, ['placeholder'=> 'Select Parent Category data....','class' => 'form-select mt-2','id' => 'parentCategory']) !!}
-            {!! $errors->first("category_name",'<span class="text-danger">:message</span>') !!}
-        </div>
-    {{-- @endif --}}
+    <div class="col-6 mt-2">
+        {!! Form::label("category_name", "Select Category Name: ") !!}
+        {!! Form::select('category_name',$category_name, isset($subCategory[0]) ? $subCategory[0] : null, ['placeholder'=> 'Select Parent Category data....','class' => 'form-select mt-2','id' => 'parentCategory']) !!}
+        {!! $errors->first("category_name",'<span class="text-danger">:message</span>') !!}
+    </div>
 
     <div id="addSubCategory">
 
     </div>
 
-    {!! Form::hidden('sub_category_id[]', $subCategory?  $subCategory[1] : null ,null,['id '=>'sub_category_id']) !!}
-    {!! Form::hidden('sub_sub_category_id[]', $subCategory?  $subCategory[2] : null , null ,['id '=>'sub_sub_category_id']) !!}
+    @if(isset($subCategory) && is_array($subCategory))
+
+        @php
+            $subCategories = array_slice($subCategory, 1);
+        @endphp
+
+        @foreach($subCategories as $index => $categories)
+            {!! Form::hidden('sub_category_id[]', $categories, ['id' => 'sub_category_id_'.$index , 'class' => 'forIndex','data-index' => $index]) !!}
+        @endforeach
+
+    @endif
+
+    {{-- {!! Form::hidden('sub_category_id[]',  isset($subCategory[1]) ? $subCategory[1] : null, ['id '=>'sub_category_id']) !!}
+    {!! Form::hidden('sub_sub_category_id[]', isset($subCategory[2]) ? $subCategory[2] : null, ['id '=>'sub_sub_category_id']) !!} --}}
 
     <div class="d-flex bd-highlight pt-3 ms-3">
         {!! Form::button('Save', ['type' => 'submit', 'class' => 'btn btn-primary editData', 'id' => 'editData']) !!}

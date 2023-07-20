@@ -168,7 +168,7 @@ class BookListController extends Controller
         $subcategoryIds = $this->getAllCategories($category->cateogery_id);
 
         $subCategory = array_reverse($subcategoryIds);
-        $category = [];
+        // dd($subCategory);
 
         $variants = VariantMapping::where('book_id',$id)->get();
         $variant_type = Variant::select('variant_id','variant_type')->get()->pluck('variant_type','variant_id');
@@ -248,10 +248,16 @@ class BookListController extends Controller
             }
         }
 
-        if($request->sub_sub_category_name){
+        if($request->subCategory_name){
             $this->categorymapping->where('book_id',$id)->update([
                 'book_id' => $id,
-                'cateogery_id' => $request->sub_sub_category_name
+                'cateogery_id' => $request->subCategory_name
+            ]);
+        }
+        else{
+            $this->categorymapping->create([
+                'book_id' => $id,
+                'cateogery_id' => $request->category_name
             ]);
         }
 
