@@ -81,45 +81,63 @@
                 fetchCategories(parentCategoryId, $('.forIndex:first').val());
             });
 
+            $(document).on("change", ".subcategoryDropdown", function() {
+                var categoryId = $(this).val();
+                fetchCategories(categoryId);
+            });
+
             function fetchCategories(categoryId, selectedId = 0) {
                 if (categoryId && $('.forIndex').length) {
-                    $.ajax({
-                        url: "/admin/fetch-category",
-                        type: "POST",
-                        data: {
-                            categoryId: categoryId,
-                            _token: $('meta[name="csrf-token"]').attr('content')
-                        },
-                        success: function(result) {
-                            if (result.length > 0) {
-                                var newDiv = $('<div class="col-md-6 mt-2">' +
-                                    '{!! Form::label('subCategory_name', 'Select Sub Category Name: ') !!}' +
-                                    '<select name="subCategory_name[]" class="form-control mt-2 subcategoryDropdown"></select>' +
-                                    '{!! $errors->first('subCategory_name', '<span class="text-danger">:message</span>') !!}' +
-                                    '</div>');
+                    allCategories(categoryId,selectedId,true);
+                }
+                else{
+                    allCategories(categoryId);
+                }
+            }
 
-                                $('#addSubCategory').append(newDiv);
+            function allCategories(categoryId, selectedId ,category = false){
+                $.ajax({
+                    url: "/admin/fetch-category",
+                    type: "POST",
+                    data: {
+                        categoryId: categoryId,
+                        _token: $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(result) {
+                        if (result.length > 0) {
+                            var newDiv = $('<div class="col-md-6 mt-2">' +
+                                '{!! Form::label('subCategory_name', 'Select Sub Category Name: ') !!}' +
+                                '<select name="subCategory_name" class="form-control mt-2 subcategoryDropdown"></select>' +
+                                '{!! $errors->first('subCategory_name', '<span class="text-danger">:message</span>') !!}' +
+                                '</div>');
 
-                                var subDropDownList = $('.subcategoryDropdown');
+                            $('#addSubCategory').append(newDiv);
 
-                                subDropDownList.last().append(
-                                    '<option value="">Select Sub Category</option>');
-                                $.each(result, function(index, category) {
-                                    subDropDownList.last().append('<option value="' + category
-                                        .cateogery_id + '">' + category.category_name +
-                                        '</option>');
-                                });
-                            }
+                            var subDropDownList = $('.subcategoryDropdown');
+
+                            subDropDownList.last().append(
+                                '<option value="">Select Sub Category</option>');
+                            $.each(result, function(index, category) {
+                                subDropDownList.last().append('<option value="' + category
+                                    .cateogery_id + '">' + category.category_name +
+                                    '</option>');
+                            });
+                        }
+
+                        if(category){
                             $('.subcategoryDropdown:last').val(selectedId);
                             $('.forIndex:first').remove()
                             fetchCategories(selectedId,$('.forIndex:first').val());
-                        },
-                        error: function(msg) {
-                            console.log(msg);
                         }
-                    });
-                }
+                        else{
 
+                        }
+                    },
+
+                    error: function(msg) {
+                        console.log(msg);
+                    }
+                });
             }
         });
     </script>

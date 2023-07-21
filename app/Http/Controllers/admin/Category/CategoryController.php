@@ -90,8 +90,6 @@ class CategoryController extends Controller
     {
         $categoryData = CategoryList::where('cateogery_id',$id)->first();
 
-        // $category_parent_id = CategoryList::select('cateogery_id','category_name')->get()->pluck('category_name','cateogery_id');
-
         return view('admin.Category.edit',compact('categoryData'));
     }
 
@@ -114,7 +112,7 @@ class CategoryController extends Controller
             return redirect()->route('categories.index')->with('error','The Data is not available !!');
         }
 
-        return redirect()->route('categories.index')->with('success','Category Data  Updated successfully !!');
+        return redirect()->route('categories.index')->with('success','Category Data Updated successfully !!');
     }
 
     /**

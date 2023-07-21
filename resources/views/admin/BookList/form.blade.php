@@ -105,9 +105,6 @@
 
     @endif
 
-    {{-- {!! Form::hidden('sub_category_id[]',  isset($subCategory[1]) ? $subCategory[1] : null, ['id '=>'sub_category_id']) !!}
-    {!! Form::hidden('sub_sub_category_id[]', isset($subCategory[2]) ? $subCategory[2] : null, ['id '=>'sub_sub_category_id']) !!} --}}
-
     <div class="d-flex bd-highlight pt-3 ms-3">
         {!! Form::button('Save', ['type' => 'submit', 'class' => 'btn btn-primary editData', 'id' => 'editData']) !!}
     </div>

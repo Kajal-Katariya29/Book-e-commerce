@@ -64,7 +64,6 @@ class BookListController extends Controller
     public function create()
     {
         // $this->authorize('book.create');
-
         $subCatData = [];
         $subCategory = [];
         $bookData = $this->bookList->first();
@@ -168,7 +167,6 @@ class BookListController extends Controller
         $subcategoryIds = $this->getAllCategories($category->cateogery_id);
 
         $subCategory = array_reverse($subcategoryIds);
-        // dd($subCategory);
 
         $variants = VariantMapping::where('book_id',$id)->get();
         $variant_type = Variant::select('variant_id','variant_type')->get()->pluck('variant_type','variant_id');
