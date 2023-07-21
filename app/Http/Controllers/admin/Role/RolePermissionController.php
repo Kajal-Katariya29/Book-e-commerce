@@ -41,8 +41,8 @@ class RolePermissionController extends Controller
      */
     public function create()
     {
-        $role = Role::select('role_id','name')->get()->pluck('name','role_id');
-        $permission = Permission::select('permission_id','p_name')->get()->pluck('p_name','permission_id');
+        $role = Role::select('role_id','name')->pluck('name','role_id');
+        $permission = Permission::select('permission_id','p_name')->pluck('p_name','permission_id');
         return view('admin.RolePermission.create',compact('role','permission'));
     }
 
@@ -78,11 +78,8 @@ class RolePermissionController extends Controller
     public function edit($id)
     {
         $rolePermissionData = RolePermission::where('role_permission_id',$id)->first();
-
-        $role = Role::select('role_id','name')->get()->pluck('name','role_id');
-
-        $permission = Permission::select('permission_id','p_name')->get()->pluck('p_name','permission_id');
-
+        $role = Role::select('role_id','name')->pluck('name','role_id');
+        $permission = Permission::select('permission_id','p_name')->pluck('p_name','permission_id');
         return view('admin.RolePermission.edit',compact('rolePermissionData','role','permission'));
     }
 

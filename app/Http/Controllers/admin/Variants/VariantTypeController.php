@@ -38,7 +38,7 @@ class VariantTypeController extends Controller
      */
     public function create()
     {
-        $variant_type = Variant::select('variant_id','variant_type')->get()->pluck('variant_type','variant_id');
+        $variant_type = Variant::select('variant_id','variant_type')->pluck('variant_type','variant_id');
         return view('admin.VariantTypes.create',compact('variant_type'));
     }
 
@@ -74,9 +74,7 @@ class VariantTypeController extends Controller
     public function edit($id)
     {
         $variantTypeData = VariantType::where('variant_type_id',$id)->first();
-
-        $variant_type = Variant::select('variant_id','variant_type')->get()->pluck('variant_type','variant_id');
-
+        $variant_type = Variant::select('variant_id','variant_type')->pluck('variant_type','variant_id');
         return view('admin.VariantTypes.edit',compact('variantTypeData','variant_type'));
 
     }

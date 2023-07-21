@@ -28,7 +28,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categoryDetails = CategoryList::all();
+        $categoryDetails = CategoryList::orderby('cateogery_id','desc')->get();
         return view('admin.Category.index',compact('categoryDetails'));
     }
 
@@ -51,20 +51,10 @@ class CategoryController extends Controller
      */
     public function store(CategoryListRequset $request)
     {
-        if($request->category_parent_id !== null)
-        {
-            $categoryData = CategoryList::create([
-                'category_parent_id' => $request->category_parent_id,
-                'category_name' => $request->category_name,
-            ]);
-        }
-        else{
-            $categoryData = CategoryList::create([
-                'category_parent_id' => Null,
-                'category_name' => $request->category_name,
-            ]);
-        }
-
+        $categoryData = CategoryList::create([
+            'category_parent_id' => $request->category_parent_id !== null ? $request->category_parent_id : null,
+            'category_name' => $request->category_name,
+        ]);
 
         return redirect()->route('categories.index')->with('success','Category data is added successfully !');
     }
@@ -89,7 +79,6 @@ class CategoryController extends Controller
     public function edit($id)
     {
         $categoryData = CategoryList::where('cateogery_id',$id)->first();
-
         return view('admin.Category.edit',compact('categoryData'));
     }
 
@@ -102,10 +91,10 @@ class CategoryController extends Controller
      */
     public function update(CategoryListRequset $request, $id)
     {
-            $categoryData = CategoryList::where('cateogery_id',$id)->update([
-                'category_parent_id' => NULL,
-                'category_name' => $request->category_name,
-            ]);
+        $categoryData = CategoryList::where('cateogery_id',$id)->update([
+            'category_parent_id' => NULL,
+            'category_name' => $request->category_name,
+        ]);
 
         if(empty($categoryData)){
 

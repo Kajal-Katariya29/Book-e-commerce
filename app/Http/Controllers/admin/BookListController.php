@@ -64,17 +64,10 @@ class BookListController extends Controller
     public function create()
     {
         // $this->authorize('book.create');
-        $subCatData = [];
-        $subCategory = [];
-        $bookData = $this->bookList->first();
-
-        $variant_type =  $this->variant->all()->pluck('variant_type','variant_id');
-
-        $variant_type_name = $this->varianttype->all()->pluck('variant_type_name', 'variant_type_id');
-
-        $category_name =  $this->categorylist->all()->where('category_parent_id',NULL)->pluck('category_name','cateogery_id');
-
-        return view('admin.BookList.create',compact('variant_type','variant_type_name','category_name','bookData','subCatData','subCategory'));
+        $variant_type =  $this->variant->pluck('variant_type','variant_id');
+        $variant_type_name = $this->varianttype->pluck('variant_type_name', 'variant_type_id');
+        $category_name =  $this->categorylist->where('category_parent_id',NULL)->pluck('category_name','cateogery_id');
+        return view('admin.BookList.create',compact('variant_type','variant_type_name','category_name'));
     }
 
     /**
@@ -118,18 +111,10 @@ class BookListController extends Controller
             }
         }
 
-        if($request->subCategory_name){
-            $this->categorymapping->create([
-                'book_id' => $bookdata->toArray()['book_id'],
-                'cateogery_id' => $request->subCategory_name
-            ]);
-        }
-        else{
-            $this->categorymapping->create([
-                'book_id' => $bookdata->toArray()['book_id'],
-                'cateogery_id' => $request->category_name
-            ]);
-        }
+        $categoryMapping = $this->categorymapping->create([
+            'book_id' => $bookdata->toArray()['book_id'],
+            'cateogery_id' => $request->subCategory_name ? $request->subCategory_name : $request->subCategory_name
+        ]);
 
         return redirect()->route('books.index')->with('success','Book Record created successfully !!');
     }
@@ -169,8 +154,8 @@ class BookListController extends Controller
         $subCategory = array_reverse($subcategoryIds);
 
         $variants = VariantMapping::where('book_id',$id)->get();
-        $variant_type = Variant::select('variant_id','variant_type')->get()->pluck('variant_type','variant_id');
-        $variant_type_name = VariantType::select('variant_type_id','variant_type_name')->get()->pluck('variant_type_name','variant_type_id');
+        $variant_type = Variant::select('variant_id','variant_type')->pluck('variant_type','variant_id');
+        $variant_type_name = VariantType::select('variant_type_id','variant_type_name')->pluck('variant_type_name','variant_type_id');
         $category_name = CategoryList::where('category_parent_id',NULL)->select('cateogery_id','category_name')->pluck('category_name','cateogery_id');
 
         return view('admin.BookList.edit',compact('bookData','variant_type','variant_type_name','category_name','variants','category','subCategory'));
@@ -246,18 +231,10 @@ class BookListController extends Controller
             }
         }
 
-        if($request->subCategory_name){
-            $this->categorymapping->where('book_id',$id)->update([
-                'book_id' => $id,
-                'cateogery_id' => $request->subCategory_name
-            ]);
-        }
-        else{
-            $this->categorymapping->create([
-                'book_id' => $id,
-                'cateogery_id' => $request->category_name
-            ]);
-        }
+        $categoryMapping =  $this->categorymapping->where('book_id',$id)->update([
+            'book_id' => $id,
+            'cateogery_id' => $request->subCategory_name ? $request->subCategory_name : $request->category_name
+        ]);
 
         if(empty($bookData)){
             return redirect()->route('books.index')->with('error','The Data is not available !!');

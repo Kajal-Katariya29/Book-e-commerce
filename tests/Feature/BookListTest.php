@@ -39,7 +39,8 @@ class BookListTest extends TestCase
             'variant_id' => [$variant->variant_id],
             'variant_type_name' => [$variantType->variant_type_id],
             'images' => $bookMedia->media_name,
-            'sub_sub_category_name' => $category->cateogery_id,
+            'category_name' => $category->cateogery_id,
+            'subCategory_name' => $category->category_parent_id,
             'book_price' => [$book->book_price]
         ]);
         $response->assertRedirect('/admin/books');

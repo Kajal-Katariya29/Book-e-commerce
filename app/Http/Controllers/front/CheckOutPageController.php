@@ -12,8 +12,9 @@ use App\Http\Requests\CheckOutRequest;
 class CheckOutPageController extends Controller
 {
     public function checkOut(){
-        $carts = CartList::where('user_id',Auth::user()->user_id)->get();
-        $addressdata = Address::where('user_id',Auth::user()->user_id)->get();
+        $userId = Auth::user()->user_id;
+        $carts = CartList::where('user_id',$userId)->get();
+        $addressdata = Address::where('user_id',$userId)->get();
         return view('front.HomePage.checkOutPage',compact('carts','addressdata'));
     }
 

@@ -46,6 +46,11 @@ class VariantTest extends DuskTestCase
         });
     }
 
+    public function getVariantData(){
+        $variant = Variant::factory()->create();
+        return $variant;
+    }
+
     public function testCreateVariant()
     {
         $this->browse(function (Browser $browser){
@@ -71,11 +76,11 @@ class VariantTest extends DuskTestCase
     {
         $this->browse(function (Browser $browser) {
             $this->testLogin();
-            $variant = Variant::factory()->create();
+            $variant = $this->getVariantData();
             $browser->visit('http://127.0.0.1:8000/admin/variants');
             $browser->assertVisible("#edit{$variant->variant_id}")->visit($browser->attribute("#edit{$variant->variant_id}", 'href'));
             $browser->screenshot('variant/testEditVariant_view');
-            $browser->type('variant_type',$this->variant['variant_type']);
+            $browser->type('variant_type',$variant->variant_type);
             $browser->press('save');
             $browser->screenshot('variant/testEditVariant');
         });
@@ -85,7 +90,7 @@ class VariantTest extends DuskTestCase
     {
         $this->browse(function (Browser $browser) {
             $this->testLogin();
-            $variant = Variant::factory()->create();
+            $variant = $this->getVariantData();
             $browser->visit('http://127.0.0.1:8000/admin/variants');
             $browser->click("@delete_{$variant->variant_id}");
             $browser->screenshot('variant/testDeleteVariant');

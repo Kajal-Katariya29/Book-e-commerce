@@ -49,7 +49,6 @@ class VariantsController extends Controller
     public function store(VariantsRequest $request)
     {
         Variant::create($request->only(['variant_type']));
-
         return redirect()->route('variants.index')->with('success','Variant Record created successfully !!');
     }
 

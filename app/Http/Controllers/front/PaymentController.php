@@ -18,8 +18,8 @@ class PaymentController extends Controller
     public function success(Request $request)
     {
         \Stripe\Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
-        $sessionId = $request->get('session_id');
-        $orderId = $request->get('order_id');
+        $sessionId = $request->session_id;
+        $orderId = $request->order_id;
         if($sessionId){
             Payment::where('session_id',$sessionId)->update([
                 'status' => 'success',
@@ -42,7 +42,7 @@ class PaymentController extends Controller
     public function cancel(Request $request){
 
         \Stripe\Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
-        $sessionId = $request->get('session_id');
+        $sessionId = $request->session_id;
         if($sessionId){
             payment::where('session_id',$sessionId)->update([
                 'status' => 'failed',

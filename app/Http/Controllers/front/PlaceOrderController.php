@@ -15,9 +15,10 @@ use Illuminate\Support\Carbon;
 class PlaceOrderController extends Controller
 {
     public function placeOrder(Request $request, $id){
+        $userId = Auth::user()->user_id;
         $addressdata = Address::where('address_id',$id)->first();
-        $addresses = Address::where('user_id',Auth::user()->user_id)->get();
-        $cartlists = CartList::with('books','variants')->where('user_id',Auth::user()->user_id)->get();
+        $addresses = Address::where('user_id',$userId)->get();
+        $cartlists = CartList::with('books','variants')->where('user_id',$userId)->get();
         return view('front.HomePage.placeOrder',compact('addressdata','addresses','cartlists'));
     }
 

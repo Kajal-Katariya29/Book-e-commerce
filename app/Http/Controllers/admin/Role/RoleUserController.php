@@ -39,8 +39,8 @@ class RoleUserController extends Controller
      */
     public function create()
     {
-        $role = Role::select('role_id','name')->get()->pluck('name','role_id');
-        $user = User::select('user_id','first_name')->get()->pluck('first_name','user_id');
+        $role = Role::select('role_id','name')->pluck('name','role_id');
+        $user = User::select('user_id','first_name')->pluck('first_name','user_id');
         return view('admin.RoleUser.create',compact('role','user'));
 
     }
@@ -77,11 +77,8 @@ class RoleUserController extends Controller
     public function edit($id)
     {
         $roleUserData = RoleUser::where('role_user_id',$id)->first();
-
-        $role = Role::select('role_id','name')->get()->pluck('name','role_id');
-
-        $user = User::select('user_id','first_name')->get()->pluck('first_name','user_id');
-
+        $role = Role::select('role_id','name')->pluck('name','role_id');
+        $user = User::select('user_id','first_name')->pluck('first_name','user_id');
         return view('admin.RoleUser.edit',compact('roleUserData','role','user'));
     }
 

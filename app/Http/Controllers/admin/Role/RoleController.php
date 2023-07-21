@@ -26,8 +26,7 @@ class RoleController extends Controller
      */
     public function index()
     {
-        $roles = Role::all();
-
+        $roles = Role::orderby('role_id','desc')->get();
         return view('admin.Role.index',compact('roles'));
     }
 
@@ -50,7 +49,6 @@ class RoleController extends Controller
     public function store(RoleRequest $request)
     {
         Role::create($request->only('name'));
-
         return redirect()->route('roles.index')->with('success','Role is created successfully !!');
     }
 
@@ -74,7 +72,6 @@ class RoleController extends Controller
     public function edit($id)
     {
         $roleData = Role::where('role_id',$id)->first();
-
         return view('admin.Role.edit',compact('roleData'));
 
     }

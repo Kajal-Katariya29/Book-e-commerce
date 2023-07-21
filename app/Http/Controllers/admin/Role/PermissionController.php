@@ -26,8 +26,7 @@ class PermissionController extends Controller
      */
     public function index()
     {
-        $permissions = Permission::all();
-
+        $permissions = Permission::orderby('permission_id','desc')->get();
         return view('admin.Permission.index',compact('permissions'));
     }
 
@@ -50,7 +49,6 @@ class PermissionController extends Controller
     public function store(PermissionRequest $request)
     {
         Permission::create($request->only('p_name'));
-
         return redirect()->route('permissions.index')->with('success','Permission Detail is created successfully !!');
     }
 
@@ -63,7 +61,6 @@ class PermissionController extends Controller
     public function show($id)
     {
         $permissionData = Permission::where('permission_id',$id)->first();
-
         return view('admin.Permission.edit',compact('permissionData'));
     }
 
@@ -76,7 +73,6 @@ class PermissionController extends Controller
     public function edit($id)
     {
         $permissionData = Permission::where('permission_id',$id)->first();
-
         return view('admin.Permission.edit',compact('permissionData'));
     }
 

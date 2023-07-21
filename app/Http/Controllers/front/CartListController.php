@@ -18,7 +18,8 @@ class CartListController extends Controller
      */
     public function index()
     {
-        $cartLists = CartList::with('books.bookMedia','variants','user')->where('user_id',Auth::user()->user_id)->get();
+        $userId = Auth::user()->user_id;
+        $cartLists = CartList::with('books.bookMedia','variants','user')->where('user_id',$userId)->get();
         return view('front.HomePage.cartList',compact('cartLists'));
     }
 
